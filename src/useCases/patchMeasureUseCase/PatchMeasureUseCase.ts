@@ -2,22 +2,32 @@ import validator from 'validator'
 import { SendError } from '../../common/errors/SendError'
 import { IMeasureRepository } from '../../domain/IMeasureRepository'
 import { PatchInputDTO } from './PatchMeasureDTO'
+import { Measure } from '../../domain/Measure'
 
 export class PatchMeasureUseCase {
   constructor(private readonly patchMeasureRepository: IMeasureRepository) {}
 
   async updateMeasure(data: PatchInputDTO): Promise<void> {
     try {
-      this.validateUuidAndValue(data)
+      this.validateInputData(data)
 
-      await this.patchMeasureRepository.findMeasureByUuid(data.measure_uuid)
+      const measure = await this.patchMeasureRepository.findMeasureByUuid(
+        data.measure_uuid,
+      )
+
+      this.ensureMeasureNotConfirmed(measure)
+
+      await this.patchMeasureRepository.confirmMeasure(
+        data.measure_uuid,
+        data.confirmed_value,
+      )
     } catch (error) {
       console.error('Error:', error)
       throw error
     }
   }
 
-  private validateUuidAndValue(data: PatchInputDTO): void {
+  private validateInputData(data: PatchInputDTO): void {
     if (!data.measure_uuid || !data.confirmed_value) {
       throw new SendError(
         400,
@@ -26,23 +36,29 @@ export class PatchMeasureUseCase {
       )
     }
 
-    if (
-      !data.confirmed_value ||
-      !Number.isInteger(data.confirmed_value) ||
-      data.confirmed_value <= 0
-    ) {
+    if (!Number.isInteger(data.confirmed_value) || data.confirmed_value <= 0) {
       throw new SendError(
         400,
-        'O confirmed_value deve ser um numero inteiro e maior que 0. Por favor, revise os dados e tente novamente.',
+        'O confirmed_value deve ser um número inteiro e maior que 0. Por favor, revise os dados e tente novamente.',
         'INVALID_DATA',
       )
     }
 
-    if (!data.measure_uuid || !validator.isUUID(data.measure_uuid)) {
+    if (!validator.isUUID(data.measure_uuid)) {
       throw new SendError(
         400,
-        'O measure_uuid informado é inválido ou não foi informado. Por favor, revise os dados e tente novamente.',
+        'O measure_uuid informado é inválido. Por favor, revise os dados e tente novamente.',
         'INVALID_DATA',
+      )
+    }
+  }
+
+  private ensureMeasureNotConfirmed(measure: Measure): void {
+    if (measure.hasConfirmed) {
+      throw new SendError(
+        409,
+        'Leitura do mês já confirmada',
+        'MEASURE_ALREADY_CONFIRMED',
       )
     }
   }
