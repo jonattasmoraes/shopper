@@ -54,4 +54,19 @@ export class MeasureRepositoryPostgresImpl implements IMeasureRepository {
       throw new Error('Failed to find measure by customer code and date')
     }
   }
+
+  async findMeasureByUuid(uuid: string): Promise<Measure> {
+    try {
+      const result = await this.db.query(
+        `SELECT * FROM measures
+         WHERE measure_uuid = $1`,
+        [uuid],
+      )
+
+      return result.rows[0]
+    } catch (error) {
+      console.error(error)
+      throw error
+    }
+  }
 }
