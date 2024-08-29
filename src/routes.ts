@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { MeasureRepositoryPostgresImpl } from './repositories/MeasureRepositoryPostgresImpl'
 import { pool } from './config/Postgres'
-import { CreateMeasureUseCase } from './useCases/CreateMeasureUseCase'
+import { CreateMeasureUseCase } from './useCases/createMeasureUseCase/CreateMeasureUseCase'
 import { CreateMeasureController } from './controllers/CreateMeasureController'
 
 const router = Router()

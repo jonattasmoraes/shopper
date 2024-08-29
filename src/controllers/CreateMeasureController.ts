@@ -2,8 +2,11 @@ import { Request, Response } from 'express'
 import { AppError } from '../common/errors/AppError'
 import { ErrorHandler } from '../common/errors/ErrorHandler'
 import { InternalServerError } from '../common/errors/InternalServerError'
-import { CreateInputDTO, CreateOutputDTO } from '../useCases/CreateMeasureDTO'
-import { CreateMeasureUseCase } from '../useCases/CreateMeasureUseCase'
+import {
+  CreateInputDTO,
+  CreateOutputDTO,
+} from '../useCases/createMeasureUseCase/CreateMeasureDTO'
+import { CreateMeasureUseCase } from '../useCases/createMeasureUseCase/CreateMeasureUseCase'
 
 export class CreateMeasureController {
   constructor(private readonly measureUseCase: CreateMeasureUseCase) {}

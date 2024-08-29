@@ -1,9 +1,9 @@
 import moment from 'moment'
 import validator from 'validator'
-import { SendError } from '../common/errors/SendError'
-import { geminiProvider } from '../config/GeminiProvider'
-import { IMeasureRepository } from '../domain/IMeasureRepository'
-import { Measure } from '../domain/Measure'
+import { SendError } from '../../common/errors/SendError'
+import { geminiProvider } from '../../config/GeminiProvider'
+import { IMeasureRepository } from '../../domain/IMeasureRepository'
+import { Measure } from '../../domain/Measure'
 import { CreateInputDTO, CreateOutputDTO } from './CreateMeasureDTO'
 
 export class CreateMeasureUseCase {
