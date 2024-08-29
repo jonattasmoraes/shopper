@@ -60,6 +60,7 @@ export class CreateMeasureUseCase {
       customerCode: data.customer_code,
       measureDatetime: validDate,
       measureType: data.measure_type,
+      hasConfirmed: false,
     })
 
     // Obtém os dados adicionais usando geminiProvider

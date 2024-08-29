@@ -19,7 +19,7 @@ export class Measure {
     this.measureDatetime = props.measureDatetime
     this.measureType = props.measureType
     this.imageUrl = props.imageUrl
-    this.hasConfirmed = false
+    this.hasConfirmed = props.hasConfirmed
 
     validate(props)
   }
