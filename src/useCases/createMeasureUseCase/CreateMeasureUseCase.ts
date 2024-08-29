@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid'
 import moment from 'moment'
 import validator from 'validator'
 import { SendError } from '../../common/errors/SendError'
@@ -55,6 +56,7 @@ export class CreateMeasureUseCase {
   ): Promise<Measure> {
     // Cria o objeto Measure com valores iniciais
     const measure = new Measure({
+      measureUuid: uuid(),
       customerCode: data.customer_code,
       measureDatetime: validDate,
       measureType: data.measure_type,

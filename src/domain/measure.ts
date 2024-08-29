@@ -1,4 +1,3 @@
-import { v4 as uuid } from 'uuid'
 import { SendError } from '../common/errors/SendError'
 
 export type MeasureType = 'WATER' | 'GAS'
@@ -14,8 +13,7 @@ export class Measure {
   public confirmedValue?: number
 
   constructor(props: Measure) {
-    this.measureUuid = uuid()
-
+    this.measureUuid = props.measureUuid
     this.customerCode = props.customerCode
     this.measureValue = props.measureValue
     this.measureDatetime = props.measureDatetime
