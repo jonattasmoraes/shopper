@@ -5,52 +5,51 @@ import { PatchInputDTO } from './PatchMeasureDTO'
 import { Measure } from '../../domain/Measure'
 
 export class PatchMeasureUseCase {
-  constructor(private readonly patchMeasureRepository: IMeasureRepository) {}
+  constructor(private readonly measureRepository: IMeasureRepository) {}
 
   async updateMeasure(data: PatchInputDTO): Promise<void> {
     try {
       this.validateInputData(data)
 
-      const measure = await this.patchMeasureRepository.findMeasureByUuid(
-        data.measure_uuid,
-      )
+      const measure = await this.findMeasureByUuid(data.measure_uuid)
 
       this.ensureMeasureNotConfirmed(measure)
 
-      await this.patchMeasureRepository.confirmMeasure(
-        data.measure_uuid,
-        data.confirmed_value,
-      )
+      await this.confirmMeasure(data.measure_uuid, data.confirmed_value)
     } catch (error) {
-      console.error('Error:', error)
+      console.error('Error updating measure:', error)
       throw error
     }
   }
 
   private validateInputData(data: PatchInputDTO): void {
-    if (!data.measure_uuid || !data.confirmed_value) {
-      throw new SendError(
-        400,
-        'O measure_uuid e confirmed_value devem ser informados. Por favor, revise os dados e tente novamente.',
-        'INVALID_DATA',
-      )
-    }
+    this.validateMeasureUuid(data.measure_uuid)
+    this.validateConfirmedValue(data.confirmed_value)
+  }
 
-    if (!Number.isInteger(data.confirmed_value) || data.confirmed_value <= 0) {
-      throw new SendError(
-        400,
-        'O confirmed_value deve ser um número inteiro e maior que 0. Por favor, revise os dados e tente novamente.',
-        'INVALID_DATA',
-      )
-    }
-
-    if (!validator.isUUID(data.measure_uuid)) {
+  private validateMeasureUuid(measureUuid: string): void {
+    if (!measureUuid || !validator.isUUID(measureUuid)) {
       throw new SendError(
         400,
         'O measure_uuid informado é inválido. Por favor, revise os dados e tente novamente.',
         'INVALID_DATA',
       )
     }
+  }
+
+  private validateConfirmedValue(confirmedValue: number): void {
+    if (!Number.isInteger(confirmedValue) || confirmedValue <= 0) {
+      throw new SendError(
+        400,
+        'O confirmed_value deve ser um número inteiro e maior que 0. Por favor, revise os dados e tente novamente.',
+        'INVALID_DATA',
+      )
+    }
+  }
+
+  private async findMeasureByUuid(measureUuid: string): Promise<Measure> {
+    const measure = await this.measureRepository.findMeasureByUuid(measureUuid)
+    return measure
   }
 
   private ensureMeasureNotConfirmed(measure: Measure): void {
@@ -61,5 +60,12 @@ export class PatchMeasureUseCase {
         'MEASURE_ALREADY_CONFIRMED',
       )
     }
+  }
+
+  private async confirmMeasure(
+    measureUuid: string,
+    confirmedValue: number,
+  ): Promise<void> {
+    await this.measureRepository.confirmMeasure(measureUuid, confirmedValue)
   }
 }

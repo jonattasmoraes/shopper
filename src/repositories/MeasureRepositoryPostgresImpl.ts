@@ -91,9 +91,9 @@ export class MeasureRepositoryPostgresImpl implements IMeasureRepository {
       console.log(measure)
 
       return measure
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error finding measure by UUID: ', error)
-      throw new SendError(500, 'Internal Server Error', 'INTERNAL_SERVER_ERROR')
+      throw error
     }
   }
 
