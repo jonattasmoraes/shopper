@@ -2,10 +2,7 @@ import { v4 as uuid } from 'uuid'
 import moment from 'moment'
 import { SendError } from '../common/errors/SendError'
 
-enum MeasureType {
-  TEMPERATURE = 'WATER',
-  HUMIDITY = 'GAS',
-}
+export type MeasureType = 'WATER' | 'GAS'
 
 export class Measure {
   public measureUuid?: string
@@ -27,38 +24,34 @@ export class Measure {
     this.imageUrl = props.imageUrl
     this.hasConfirmed = false
 
-    this.validate()
+    validate(props)
+  }
+}
+
+function validate(props: Measure): void {
+  if (!props.customerCode || typeof props.customerCode !== 'string') {
+    throw new SendError(
+      400,
+      'O customer_code nao foi informado ou é invalido, por favor revise os dados e tente novamente',
+      'INVALID_DATA',
+    )
   }
 
-  private validate(): void {
-    if (!this.customerCode || !this.measureDatetime || !this.measureType) {
-      throw new SendError(400, 'Invalid data', 'INVALID_DATA')
-    }
+  const formattedDate = dateValidator(props.measureDatetime?.toString())
+  if (!formattedDate) {
+    throw new SendError(
+      400,
+      'O measure_datetime não foi informado ou é invalido, por favor revise os dados e tente novamente',
+      'INVALID_DATA',
+    )
+  }
 
-    if (!this.customerCode || typeof this.customerCode !== 'string') {
-      throw new SendError(
-        400,
-        'O customer_code nao foi informado ou é invalido, por favor revise os dados e tente novamente',
-        'INVALID_DATA',
-      )
-    }
-
-    if (!this.measureType || !['WATER', 'GAS'].includes(this.measureType)) {
-      throw new SendError(
-        400,
-        'O measure_type não foi informado ou é invalido por ser diferente de "WATER" ou "GAS", por favor revise os dados e tente novamente',
-        'INVALID_DATA',
-      )
-    }
-
-    const formattedDate = dateValidator(this.measureDatetime?.toString())
-    if (!formattedDate) {
-      throw new SendError(
-        400,
-        'O measure_datetime não foi informado ou é invalido, por favor revise os dados e tente novamente',
-        'INVALID_DATA',
-      )
-    }
+  if (!props.measureType || !['WATER', 'GAS'].includes(props.measureType)) {
+    throw new SendError(
+      400,
+      'O measure_type não foi informado ou é invalido por ser diferente de "WATER" ou "GAS", por favor revise os dados e tente novamente',
+      'INVALID_DATA',
+    )
   }
 }
 

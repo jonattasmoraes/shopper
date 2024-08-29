@@ -1,6 +1,6 @@
 import { Pool } from 'pg'
 import { IMeasureRepository } from '../domain/IMeasureRepository'
-import { Measure } from '../domain/measure'
+import { Measure } from '../domain/Measure'
 
 export class MeasureRepositoryPostgresImpl implements IMeasureRepository {
   private db: Pool
