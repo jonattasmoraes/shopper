@@ -10,6 +10,7 @@
     "start": "node dist/main.js"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.17.1",
     "@types/pg": "^8.11.8",
     "@types/uuid": "^10.0.0",
     "dotenv": "^16.4.5",
