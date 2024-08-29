@@ -1,4 +1,4 @@
-import { MeasureType } from '../domain/Measure'
+import { MeasureType } from '../../domain/Measure'
 
 export type CreateInputDTO = {
   image: string
