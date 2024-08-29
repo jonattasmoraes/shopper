@@ -29,4 +29,29 @@ export class MeasureRepositoryPostgresImpl implements IMeasureRepository {
       throw new Error('Failed to create measure')
     }
   }
+
+  async findMeasure(measure: Measure): Promise<Measure> {
+    const query = `
+      SELECT *
+      FROM measures
+      WHERE customer_code = $1
+      AND TO_CHAR(measure_datetime, 'YYYY-MM') = $2
+      AND measure_type = $3
+    `
+
+    try {
+      const result = await this.db.query(query, [
+        measure.customerCode,
+        measure.measureDatetime,
+        measure.measureType,
+      ])
+      return result.rows[0]
+    } catch (error) {
+      console.error(
+        'Error finding measure by customer code, date and type:',
+        error,
+      )
+      throw new Error('Failed to find measure by customer code and date')
+    }
+  }
 }
