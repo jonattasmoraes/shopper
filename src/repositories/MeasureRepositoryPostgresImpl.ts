@@ -1,6 +1,7 @@
 import { Pool } from 'pg'
 import { IMeasureRepository } from '../domain/IMeasureRepository'
 import { Measure } from '../domain/Measure'
+import { SendError } from '../common/errors/SendError'
 
 export class MeasureRepositoryPostgresImpl implements IMeasureRepository {
   private db: Pool
@@ -63,10 +64,34 @@ export class MeasureRepositoryPostgresImpl implements IMeasureRepository {
         [uuid],
       )
 
-      return result.rows[0]
+      if (result.rows.length === 0) {
+        throw new SendError(404, 'Leitura do mês já realizada', 'NOT_FOUND')
+      }
+
+      const {
+        measure_uuid,
+        customer_code,
+        measure_datetime,
+        measure_type,
+        image_url,
+        measure_value,
+        has_confirmed,
+      } = result.rows[0]
+
+      const measure = new Measure({
+        measureUuid: measure_uuid,
+        customerCode: customer_code,
+        measureDatetime: measure_datetime,
+        measureType: measure_type,
+        imageUrl: image_url,
+        measureValue: measure_value,
+        hasConfirmed: has_confirmed,
+      })
+
+      return measure
     } catch (error) {
-      console.error(error)
-      throw error
+      console.error('Error finding measure by UUID: ', error)
+      throw new SendError(500, 'Internal Server Error', 'INTERNAL_SERVER_ERROR')
     }
   }
 }
