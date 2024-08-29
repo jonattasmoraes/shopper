@@ -88,9 +88,26 @@ export class MeasureRepositoryPostgresImpl implements IMeasureRepository {
         hasConfirmed: has_confirmed,
       })
 
+      console.log(measure)
+
       return measure
     } catch (error) {
       console.error('Error finding measure by UUID: ', error)
+      throw new SendError(500, 'Internal Server Error', 'INTERNAL_SERVER_ERROR')
+    }
+  }
+
+  async confirmMeasure(uuid: string, confirmedValue: number): Promise<void> {
+    try {
+      await this.db.query(
+        `UPDATE measures
+         SET has_confirmed = true,
+             measure_value = $1
+         WHERE measure_uuid = $2`,
+        [confirmedValue, uuid],
+      )
+    } catch (error) {
+      console.error('Error confirming measure: ', error)
       throw new SendError(500, 'Internal Server Error', 'INTERNAL_SERVER_ERROR')
     }
   }
