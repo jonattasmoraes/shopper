@@ -5,4 +5,5 @@ export interface IMeasureRepository {
   findMeasure(measure: Measure): Promise<Measure>
   findMeasureByUuid(uuid: string): Promise<Measure>
   confirmMeasure(uuid: string, confirmedValue: number): Promise<void>
+  listMeasures(code: string, type?: string): Promise<Measure[]>
 }

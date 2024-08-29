@@ -111,4 +111,43 @@ export class MeasureRepositoryPostgresImpl implements IMeasureRepository {
       throw new SendError(500, 'Internal Server Error', 'INTERNAL_SERVER_ERROR')
     }
   }
+
+  async listMeasures(code: string, type?: string): Promise<Measure[]> {
+    try {
+      const query = `
+        SELECT * FROM measures
+        WHERE customer_code = $1
+        ${type ? 'AND measure_type = $2' : ''}
+      `
+
+      const params = [code]
+      if (type) {
+        params.push(type)
+      }
+
+      const result = await this.db.query(query, params)
+
+      if (result.rows.length === 0) {
+        throw new SendError(404, 'Leitura do mês não realizada', 'NOT_FOUND')
+      }
+
+      const measures = result.rows.map(
+        (row) =>
+          new Measure({
+            measureUuid: row.measure_uuid,
+            customerCode: row.customer_code,
+            measureDatetime: row.measure_datetime,
+            measureType: row.measure_type,
+            imageUrl: row.image_url,
+            measureValue: row.measure_value,
+            hasConfirmed: row.has_confirmed,
+          }),
+      )
+
+      return measures
+    } catch (error) {
+      console.error('Error retrieving measures:', error)
+      throw new SendError(500, 'Failed to retrieve measures', 'INTERNAL_ERROR')
+    }
+  }
 }
