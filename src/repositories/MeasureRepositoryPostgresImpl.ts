@@ -147,7 +147,7 @@ export class MeasureRepositoryPostgresImpl implements IMeasureRepository {
       return measures
     } catch (error) {
       console.error('Error retrieving measures:', error)
-      throw new SendError(500, 'Failed to retrieve measures', 'INTERNAL_ERROR')
+      throw error
     }
   }
 }
