@@ -8,9 +8,9 @@ Listagem de medições realizadas para um cliente específico.
 
 ## Funcionalidades
 
-- **_POST /upload_**: Recebe uma imagem em base64, consulta o Gemini e retorna a medição lida pela API.
-- **_PATCH /confirm_**: Confirma ou corrige o valor lido pelo LLM.
-- **_GET /<customer_code>/list_**: Lista todas as medições realizadas por um cliente com a opção de usar um parâmetro.
+- ***POST /upload***: Recebe uma imagem em base64, consulta o Gemini e retorna a medição lida pela API.
+- ***PATCH /confirm***: Confirma ou corrige o valor lido pelo LLM.
+- ***GET /<customer*code>/list***: Lista todas as medições realizadas por um cliente com a opção de usar um parâmetro.
 
 ## Requisitos
 
