@@ -31,4 +31,6 @@ router.get('/:customerCode/list', (req, res) =>
   listController.listMeasures(req, res),
 )
 
+router.use('/api', router)
+
 export default router
