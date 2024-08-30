@@ -41,7 +41,7 @@ async function generateTextFromImage(fileUri: string): Promise<string> {
   const result = await model.generateContent([
     { fileData: { mimeType: 'image/jpeg', fileUri } },
     {
-      text: 'Return only the sequence of numbers from the image, ignoring text and non-numeric characters.',
+      text: 'Analise a imagem de um medidor de água ou energia (analógico ou digital) e extraia o valor inteiro que representa o consumo. Retorne apenas o valor da leitura do medidor, priorizando a precisão na identificação dos números exibidos. Dê preferência aos valores próximos ao kWh, se disponíveis; caso contrário, retorne o valor mais evidente.',
     },
   ])
   return result.response.text()
