@@ -55,7 +55,7 @@ const swaggerDefinition = {
             description: 'The image associated with the measure',
           },
           confirmed_value: {
-            type: 'string',
+            type: 'integer',
             description: 'The customer code',
           },
         },
@@ -69,7 +69,6 @@ const swaggerDefinition = {
           },
           measure_value: {
             type: 'number',
-            format: 'float',
             description: 'Value of the measure',
           },
           measure_uuid: {
