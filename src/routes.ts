@@ -5,6 +5,8 @@ import { CreateMeasureUseCase } from './useCases/createMeasureUseCase/CreateMeas
 import { CreateMeasureController } from './controllers/CreateMeasureController'
 import { PatchMeasureUseCase } from './useCases/patchMeasureUseCase/PatchMeasureUseCase'
 import { PatchMeasureController } from './controllers/PatchMeasureController'
+import { ListMeasuresUseCase } from './useCases/listMeasuresUseCase/ListMeasuresUseCase'
+import { ListMeasureController } from './controllers/ListMeasuresController'
 
 const router = Router()
 
@@ -18,8 +20,15 @@ const createController = new CreateMeasureController(createUseCase)
 const patchUseCase = new PatchMeasureUseCase(measureRepository)
 const patchController = new PatchMeasureController(patchUseCase)
 
+// List measures and use case instance
+const listUseCase = new ListMeasuresUseCase(measureRepository)
+const listController = new ListMeasureController(listUseCase)
+
 // Routes
 router.post('/upload', (req, res) => createController.createMeasure(req, res))
 router.patch('/confirm', (req, res) => patchController.updateMeasure(req, res))
+router.get('/:customerCode/list', (req, res) =>
+  listController.listMeasures(req, res),
+)
 
 export default router
