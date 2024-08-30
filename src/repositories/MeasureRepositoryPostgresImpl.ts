@@ -88,8 +88,6 @@ export class MeasureRepositoryPostgresImpl implements IMeasureRepository {
         hasConfirmed: has_confirmed,
       })
 
-      console.log(measure)
-
       return measure
     } catch (error: unknown) {
       console.error('Error finding measure by UUID: ', error)
@@ -128,7 +126,11 @@ export class MeasureRepositoryPostgresImpl implements IMeasureRepository {
       const result = await this.db.query(query, params)
 
       if (result.rows.length === 0) {
-        throw new SendError(404, 'Leitura do mês não realizada', 'NOT_FOUND')
+        throw new SendError(
+          404,
+          'Nenhuma leitura encontrada',
+          'MEASURES_NOT_FOUND',
+        )
       }
 
       const measures = result.rows.map(
