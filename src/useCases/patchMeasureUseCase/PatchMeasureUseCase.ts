@@ -57,7 +57,7 @@ export class PatchMeasureUseCase {
       throw new SendError(
         409,
         'Leitura do mês já confirmada',
-        'MEASURE_ALREADY_CONFIRMED',
+        'CONFIRMATION_DUPLICATE',
       )
     }
   }

@@ -2,6 +2,7 @@ import { Pool } from 'pg'
 import { IMeasureRepository } from '../domain/IMeasureRepository'
 import { Measure } from '../domain/Measure'
 import { SendError } from '../common/errors/SendError'
+import moment from 'moment'
 
 export class MeasureRepositoryPostgresImpl implements IMeasureRepository {
   private db: Pool
@@ -40,19 +41,19 @@ export class MeasureRepositoryPostgresImpl implements IMeasureRepository {
       AND measure_type = $3
     `
 
+    const measureMonth = moment(measure.measureDatetime).format('YYYY-MM')
+
     try {
       const result = await this.db.query(query, [
         measure.customerCode,
-        measure.measureDatetime,
+        measureMonth,
         measure.measureType,
       ])
+
       return result.rows[0]
     } catch (error) {
-      console.error(
-        'Error finding measure by customer code, date and type:',
-        error,
-      )
-      throw new Error('Failed to find measure by customer code and date')
+      console.error('Error finding measure by customer code and date:', error)
+      throw error
     }
   }
 
@@ -65,7 +66,11 @@ export class MeasureRepositoryPostgresImpl implements IMeasureRepository {
       )
 
       if (result.rows.length === 0) {
-        throw new SendError(404, 'Leitura do mês já realizada', 'NOT_FOUND')
+        throw new SendError(
+          404,
+          'Leitura do mês já realizada',
+          'MEASURE_NOT_FOUND',
+        )
       }
 
       const {
@@ -106,7 +111,7 @@ export class MeasureRepositoryPostgresImpl implements IMeasureRepository {
       )
     } catch (error) {
       console.error('Error confirming measure: ', error)
-      throw new SendError(500, 'Internal Server Error', 'INTERNAL_SERVER_ERROR')
+      throw error
     }
   }
 
