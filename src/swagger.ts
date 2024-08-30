@@ -46,6 +46,20 @@ const swaggerDefinition = {
           },
         },
       },
+      PatchInputDTO: {
+        type: 'object',
+        required: ['measure_uuid', 'confirmed_value'],
+        properties: {
+          measure_uuid: {
+            type: 'string',
+            description: 'The image associated with the measure',
+          },
+          confirmed_value: {
+            type: 'string',
+            description: 'The customer code',
+          },
+        },
+      },
       CreateOutputDTO: {
         type: 'object',
         properties: {
