@@ -7,11 +7,14 @@ export class ListMeasuresUseCase {
   constructor(private readonly listMeasureRepository: IMeasureRepository) {}
 
   async findMeasures(code: string, type?: string): Promise<MeasuresDataDTO> {
-    try {
-      this.validateType(type)
+    // Valida o tipo de measure
+    this.validateType(type)
 
+    try {
+      // Retorna os dados da consulta
       const measures = await this.listMeasureRepository.listMeasures(code, type)
 
+      // Cria e retorna o DTO de saída
       const measureDTOs = measures.map(this.toMeasureDTO)
 
       return {
@@ -31,7 +34,8 @@ export class ListMeasuresUseCase {
   }
 
   private isValidType(type: string): boolean {
-    return type === 'WATER' || type === 'GAS'
+    const validTypes = ['WATER', 'GAS']
+    return validTypes.includes(type)
   }
 
   private toMeasureDTO(measure: Measure): MeasureDTO {
