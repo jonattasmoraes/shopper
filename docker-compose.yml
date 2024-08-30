@@ -23,5 +23,15 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: shopper
 
+  migrations:
+    image: postgres:14
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+    entrypoint: >
+      sh -c "until pg_isready -h db -U shopper; do echo 'Waiting for db...'; sleep 2; done;
+             PGPASSWORD=password psql -h db -U shopper -d shopper -f /app/schemas/measures_table.sql"
+
 volumes:
   pgdata:
