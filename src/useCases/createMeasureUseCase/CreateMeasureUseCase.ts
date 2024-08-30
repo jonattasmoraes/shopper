@@ -38,8 +38,7 @@ export class CreateMeasureUseCase {
     data: CreateInputDTO,
     validDate: string,
   ): Promise<void> {
-    const measureMonth = moment(validDate).format('YYYY-MM')
-    const measureDate = new Date(measureMonth)
+    const measureDate = new Date(validDate)
     const measureExists = await this.createMeasureRepository.findMeasure({
       customerCode: data.customer_code,
       measureDatetime: measureDate,
