@@ -6,7 +6,7 @@ import { MeasuresDataDTO, MeasureDTO } from './ListMeasuresDTO'
 export class ListMeasuresUseCase {
   constructor(private readonly listMeasureRepository: IMeasureRepository) {}
 
-  async findMeasures(code: string, type?: string): Promise<MeasuresDataDTO> {
+  async execute(code: string, type?: string): Promise<MeasuresDataDTO> {
     // Valida o tipo de measure
     this.validateType(type)
 

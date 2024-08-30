@@ -12,7 +12,7 @@ export class ListMeasureController {
       const customerCode = req.params.customerCode
       const measureType = req.query.measure_type as string
 
-      const measures = await this.listMeasuresUseCase.findMeasures(
+      const measures = await this.listMeasuresUseCase.execute(
         customerCode,
         measureType,
       )

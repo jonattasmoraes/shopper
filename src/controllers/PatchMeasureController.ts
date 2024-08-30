@@ -12,7 +12,7 @@ export class PatchMeasureController {
     try {
       const data: PatchInputDTO = req.body
 
-      await this.patchMeasureUseCase.updateMeasure(data)
+      await this.patchMeasureUseCase.execute(data)
 
       res.status(200).json({ success: true })
     } catch (error: unknown) {

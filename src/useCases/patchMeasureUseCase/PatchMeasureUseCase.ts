@@ -7,7 +7,7 @@ import { Measure } from '../../domain/Measure'
 export class PatchMeasureUseCase {
   constructor(private readonly measureRepository: IMeasureRepository) {}
 
-  async updateMeasure(data: PatchInputDTO): Promise<void> {
+  async execute(data: PatchInputDTO): Promise<void> {
     try {
       this.validateInputData(data)
 

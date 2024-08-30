@@ -10,7 +10,7 @@ import { CreateInputDTO, CreateOutputDTO } from './CreateMeasureDTO'
 export class CreateMeasureUseCase {
   constructor(private readonly createMeasureRepository: IMeasureRepository) {}
 
-  async createMeasure(data: CreateInputDTO): Promise<CreateOutputDTO> {
+  async execute(data: CreateInputDTO): Promise<CreateOutputDTO> {
     try {
       this.validateImage(data.image)
 

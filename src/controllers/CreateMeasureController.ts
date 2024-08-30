@@ -14,8 +14,7 @@ export class CreateMeasureController {
   async createMeasure(req: Request, res: Response): Promise<void> {
     try {
       const data: CreateInputDTO = req.body
-      const result: CreateOutputDTO =
-        await this.measureUseCase.createMeasure(data)
+      const result: CreateOutputDTO = await this.measureUseCase.execute(data)
       res.status(200).json(result)
     } catch (error: unknown) {
       if (error instanceof AppError) {
