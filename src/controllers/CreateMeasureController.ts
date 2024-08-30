@@ -8,6 +8,44 @@ import {
 } from '../useCases/createMeasureUseCase/CreateMeasureDTO'
 import { CreateMeasureUseCase } from '../useCases/createMeasureUseCase/CreateMeasureUseCase'
 
+/**
+ * @swagger
+ * /upload:
+ *   post:
+ *     tags: [Measures]
+ *     summary: Create a new measure
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateInputDTO'
+ *     responses:
+ *       200:
+ *         description: Measure created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CreateOutputDTO'
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorDTO'
+ *       409:
+ *         description: Conflict error due to duplicate measure or similar issue
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorDTO'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorDTO'
+ */
 export class CreateMeasureController {
   constructor(private readonly measureUseCase: CreateMeasureUseCase) {}
 
