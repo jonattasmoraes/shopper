@@ -5,7 +5,7 @@ export type MeasureType = 'WATER' | 'GAS'
 export class Measure {
   public measureUuid?: string
   public customerCode: string
-  public measureDatetime: string
+  public measureDatetime: Date
   public measureValue?: number
   public measureType: MeasureType
   public hasConfirmed?: boolean

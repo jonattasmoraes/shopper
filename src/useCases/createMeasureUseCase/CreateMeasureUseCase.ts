@@ -39,9 +39,10 @@ export class CreateMeasureUseCase {
     validDate: string,
   ): Promise<void> {
     const measureMonth = moment(validDate).format('YYYY-MM')
+    const measureDate = new Date(measureMonth)
     const measureExists = await this.createMeasureRepository.findMeasure({
       customerCode: data.customer_code,
-      measureDatetime: measureMonth,
+      measureDatetime: measureDate,
       measureType: data.measure_type,
     })
 
@@ -54,19 +55,17 @@ export class CreateMeasureUseCase {
     data: CreateInputDTO,
     validDate: string,
   ): Promise<Measure> {
-    // Cria o objeto Measure com valores iniciais
+    const measureDate = new Date(validDate)
     const measure = new Measure({
       measureUuid: uuid(),
       customerCode: data.customer_code,
-      measureDatetime: validDate,
+      measureDatetime: measureDate,
       measureType: data.measure_type,
       hasConfirmed: false,
     })
 
-    // Obtém os dados adicionais usando geminiProvider
     const { text: value, uri: imageUrl } = await geminiProvider(data.image)
 
-    // Atualiza o objeto Measure com os dados adicionais
     measure.imageUrl = imageUrl
     measure.measureValue = this.parseAndValidateMeasureValue(value)
 
