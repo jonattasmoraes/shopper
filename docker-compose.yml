@@ -5,10 +5,12 @@ services:
     build: .
     ports:
       - '3000:3000'
-    volumes:
-      - .:/app
+    # volumes:
+    #   - .:/app
+    # - /app/node_modules # Evita sobrescrever node_modules
     depends_on:
       - db
+      - migrations
     environment:
       DATABASE_URL: 'postgres://shopper:password@db:5432/shopper'
 
