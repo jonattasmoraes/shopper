@@ -1,10 +1,8 @@
-import { MeasureType } from '../../domain/Measure'
-
 export type CreateInputDTO = {
   image: string
   customer_code: string
   measure_datetime: string
-  measure_type: MeasureType
+  measure_type: string
 }
 
 export type CreateOutputDTO = {

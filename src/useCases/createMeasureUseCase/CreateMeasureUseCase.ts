@@ -4,7 +4,7 @@ import validator from 'validator'
 import { SendError } from '../../common/errors/SendError'
 import { geminiProvider } from '../../config/GeminiProvider'
 import { IMeasureRepository } from '../../domain/IMeasureRepository'
-import { Measure } from '../../domain/Measure'
+import { Measure, MeasureType } from '../../domain/Measure'
 import { CreateInputDTO, CreateOutputDTO } from './CreateMeasureDTO'
 
 export class CreateMeasureUseCase {
@@ -43,7 +43,7 @@ export class CreateMeasureUseCase {
     const measureExists = await this.createMeasureRepository.findMeasure({
       customerCode: data.customer_code,
       measureDatetime: measureDate,
-      measureType: data.measure_type,
+      measureType: data.measure_type as MeasureType,
     })
 
     if (measureExists) {
@@ -60,7 +60,7 @@ export class CreateMeasureUseCase {
       measureUuid: uuid(),
       customerCode: data.customer_code,
       measureDatetime: measureDate,
-      measureType: data.measure_type,
+      measureType: data.measure_type as MeasureType,
       hasConfirmed: false,
     })
 
