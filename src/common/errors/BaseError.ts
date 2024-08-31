@@ -1,28 +1,20 @@
 export class BaseError extends Error {
   public statusCode: number
+  public errorCode: string
+  public errorDescription: string
 
-  constructor(message: string, statusCode: number) {
-    super(message)
+  constructor(statusCode: number, errorCode: string, errorDescription: string) {
+    super(errorDescription)
     this.statusCode = statusCode
-    this.name = this.constructor.name
+    this.errorCode = errorCode
+    this.errorDescription = errorDescription
+
     Error.captureStackTrace(this, this.constructor)
   }
 }
 
-export class BadRequestError extends BaseError {
-  constructor(message: string = 'Bad Request') {
-    super(message, 400)
-  }
-}
-
-export class NotFoundError extends BaseError {
-  constructor(message: string = 'Not Found') {
-    super(message, 404)
-  }
-}
-
-export class ConflictError extends BaseError {
-  constructor(message: string = 'Conflict') {
-    super(message, 409)
+export class SenderError extends BaseError {
+  constructor(statusCode: number, errorCode: string, errorDescription: string) {
+    super(statusCode, errorCode, errorDescription)
   }
 }
