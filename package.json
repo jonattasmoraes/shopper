@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "dist/main.js",
   "scripts": {
+    "merge": "./update_branches.sh",
     "test": "jest",
     "lint": "eslint 'src/**/*.ts'",
     "format": "prettier --write .",
