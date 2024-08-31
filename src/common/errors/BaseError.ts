@@ -13,7 +13,7 @@ export class BaseError extends Error {
   }
 }
 
-export class SenderError extends BaseError {
+export class ClientError extends BaseError {
   constructor(statusCode: number, errorCode: string, errorDescription: string) {
     super(statusCode, errorCode, errorDescription)
   }
