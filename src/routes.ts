@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import swaggerUi from 'swagger-ui-express'
 import { MeasureRepositoryPostgresImpl } from './repositories/postgres/MeasureRepositoryPostgresImpl'
 import { pool } from './config/Postgres'
 import { CreateMeasureUseCase } from './useCases/createMeasureUseCase/CreateMeasureUseCase'
@@ -7,6 +8,7 @@ import { PatchMeasureUseCase } from './useCases/patchMeasureUseCase/PatchMeasure
 import { PatchMeasureController } from './controllers/PatchMeasureController'
 import { ListMeasuresUseCase } from './useCases/listMeasuresUseCase/ListMeasuresUseCase'
 import { ListMeasureController } from './controllers/ListMeasuresController'
+import swaggerHandler from './docs/swaggerConfig'
 
 const router = Router()
 
@@ -30,7 +32,6 @@ router.patch('/confirm', (req, res) => patchController.updateMeasure(req, res))
 router.get('/:customerCode/list', (req, res) =>
   listController.listMeasures(req, res),
 )
-
-router.use('/api', router)
+router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerHandler))
 
 export default router
