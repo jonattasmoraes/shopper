@@ -1,8 +1,8 @@
 import validator from 'validator'
 import { SendError } from '../../common/errors/SendError'
-import { IMeasureRepository } from '../../domain/IMeasureRepository'
 import { PatchInputDTO } from './PatchMeasureDTO'
-import { Measure } from '../../domain/Measure'
+import { Measure } from '../../entities/Measure'
+import { IMeasureRepository } from '../../repositories/IMeasureRepository'
 
 export class PatchMeasureUseCase {
   constructor(private readonly measureRepository: IMeasureRepository) {}

@@ -1,5 +1,5 @@
-import { IMeasureRepository } from '../../domain/IMeasureRepository'
-import { Measure } from '../../domain/Measure'
+import { IMeasureRepository } from '../../entities/IMeasureRepository'
+import { Measure } from '../../entities/Measure'
 import { ListMeasuresUseCase } from './ListMeasuresUseCase'
 import { MeasureDTO } from './ListMeasuresDTO'
 

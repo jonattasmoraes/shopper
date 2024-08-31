@@ -1,8 +1,9 @@
 import { Pool } from 'pg'
-import { IMeasureRepository } from '../domain/IMeasureRepository'
-import { Measure } from '../domain/Measure'
-import { SendError } from '../common/errors/SendError'
+
 import moment from 'moment'
+import { IMeasureRepository } from '../../repositories/IMeasureRepository'
+import { Measure } from '../../entities/Measure'
+import { SendError } from '../../common/errors/SendError'
 
 export class MeasureRepositoryPostgresImpl implements IMeasureRepository {
   private db: Pool

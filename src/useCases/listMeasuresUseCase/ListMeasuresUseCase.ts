@@ -1,6 +1,6 @@
 import { SendError } from '../../common/errors/SendError'
-import { IMeasureRepository } from '../../domain/IMeasureRepository'
-import { Measure } from '../../domain/Measure'
+import { Measure } from '../../entities/Measure'
+import { IMeasureRepository } from '../../repositories/IMeasureRepository'
 import { MeasuresDataDTO, MeasureDTO } from './ListMeasuresDTO'
 
 export class ListMeasuresUseCase {

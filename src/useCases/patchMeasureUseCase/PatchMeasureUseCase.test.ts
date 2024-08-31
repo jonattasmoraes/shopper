@@ -1,7 +1,7 @@
-import { IMeasureRepository } from '../../domain/IMeasureRepository'
+import { IMeasureRepository } from '../../entities/IMeasureRepository'
 import { PatchMeasureUseCase } from './PatchMeasureUseCase'
 import { PatchInputDTO } from './PatchMeasureDTO'
-import { Measure } from '../../domain/Measure'
+import { Measure } from '../../entities/Measure'
 
 jest.mock('../../common/errors/SendError')
 jest.mock('../../domain/IMeasureRepository')

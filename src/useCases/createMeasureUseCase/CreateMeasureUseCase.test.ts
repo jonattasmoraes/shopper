@@ -1,8 +1,8 @@
 import { CreateMeasureUseCase } from './CreateMeasureUseCase'
-import { IMeasureRepository } from '../../domain/IMeasureRepository'
+import { IMeasureRepository } from '../../repositories/IMeasureRepository'
 import { geminiProvider } from '../../config/GeminiProvider'
 import { SendError } from '../../common/errors/SendError'
-import { Measure } from '../../domain/Measure'
+import { Measure } from '../../entities/Measure'
 
 // Mocks
 jest.mock('../../config/GeminiProvider')

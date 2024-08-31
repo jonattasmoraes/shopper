@@ -3,9 +3,9 @@ import moment from 'moment'
 import validator from 'validator'
 import { SendError } from '../../common/errors/SendError'
 import { geminiProvider } from '../../config/GeminiProvider'
-import { IMeasureRepository } from '../../domain/IMeasureRepository'
-import { Measure, MeasureType } from '../../domain/Measure'
+import { Measure, MeasureType } from '../../entities/Measure'
 import { CreateInputDTO, CreateOutputDTO } from './CreateMeasureDTO'
+import { IMeasureRepository } from '../../repositories/IMeasureRepository'
 
 export class CreateMeasureUseCase {
   constructor(private readonly createMeasureRepository: IMeasureRepository) {}

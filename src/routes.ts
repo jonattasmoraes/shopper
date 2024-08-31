@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { MeasureRepositoryPostgresImpl } from './repositories/MeasureRepositoryPostgresImpl'
+import { MeasureRepositoryPostgresImpl } from './repositories/postgres/MeasureRepositoryPostgresImpl'
 import { pool } from './config/Postgres'
 import { CreateMeasureUseCase } from './useCases/createMeasureUseCase/CreateMeasureUseCase'
 import { CreateMeasureController } from './controllers/CreateMeasureController'
