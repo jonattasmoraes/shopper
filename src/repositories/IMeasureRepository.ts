@@ -2,8 +2,8 @@ import { Measure } from '../entities/Measure'
 
 export interface IMeasureRepository {
   save(measure: Measure): Promise<void>
-  findMeasure(measure: Measure): Promise<Measure>
-  findMeasureByUuid(uuid: string): Promise<Measure>
-  confirmMeasure(uuid: string, confirmedValue: number): Promise<void>
-  listMeasures(code: string, type?: string): Promise<Measure[]>
+  findByData(code: string, type: string, date: Date): Promise<Measure | null>
+  findById(id: string): Promise<Measure | null>
+  confirm(id: string, confirmedValue: number): Promise<void>
+  list(code: string, type?: string): Promise<Measure[] | null>
 }

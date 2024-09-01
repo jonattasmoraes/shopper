@@ -57,7 +57,7 @@ describe('CreateMeasureUseCase', () => {
           'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wcAAwAB/IRhC4UAAAAASUVORK5CYII=',
       }
 
-      measureRepository.findMeasure.mockResolvedValue({} as Measure)
+      measureRepository.findById.mockResolvedValue({} as Measure)
 
       await expect(useCase.execute(input)).rejects.toThrow(SendError)
       await expect(useCase.execute(input)).rejects.toThrow(

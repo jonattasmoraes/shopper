@@ -12,7 +12,15 @@ export class ListMeasuresUseCase {
 
     try {
       // Retorna os dados da consulta
-      const measures = await this.listMeasureRepository.listMeasures(code, type)
+      const measures = await this.listMeasureRepository.list(code, type)
+
+      if (!measures) {
+        throw new SendError(
+          404,
+          'Leituras não encontradas',
+          'MEASURES_NOT_FOUND',
+        )
+      }
 
       // Cria e retorna o DTO de saída
       const measureDTOs = measures.map(this.toMeasureDTO)
@@ -40,9 +48,9 @@ export class ListMeasuresUseCase {
 
   private toMeasureDTO(measure: Measure): MeasureDTO {
     return {
-      measure_uuid: measure.measureUuid,
-      measure_datetime: measure.measureDatetime,
-      measure_type: measure.measureType,
+      measure_uuid: measure.id,
+      measure_datetime: measure.dataTime,
+      measure_type: measure.type,
       has_confirmed: measure.hasConfirmed,
       image_url: measure.imageUrl,
     }

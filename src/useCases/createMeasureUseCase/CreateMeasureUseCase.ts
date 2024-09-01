@@ -1,11 +1,10 @@
-import { v4 as uuid } from 'uuid'
 import moment from 'moment'
 import validator from 'validator'
 import { SendError } from '../../common/errors/SendError'
 import { geminiProvider } from '../../config/GeminiProvider'
-import { Measure, MeasureType } from '../../entities/Measure'
 import { CreateInputDTO, CreateOutputDTO } from './CreateMeasureDTO'
 import { IMeasureRepository } from '../../repositories/IMeasureRepository'
+import { Measure } from '../../entities/Measure'
 
 export class CreateMeasureUseCase {
   constructor(private readonly createMeasureRepository: IMeasureRepository) {}
@@ -39,11 +38,11 @@ export class CreateMeasureUseCase {
     validDate: string,
   ): Promise<void> {
     const measureDate = new Date(validDate)
-    const measureExists = await this.createMeasureRepository.findMeasure({
-      customerCode: data.customer_code,
-      measureDatetime: measureDate,
-      measureType: data.measure_type as MeasureType,
-    })
+    const measureExists = await this.createMeasureRepository.findByData(
+      data.customer_code,
+      data.measure_type,
+      measureDate,
+    )
 
     if (measureExists) {
       throw new SendError(409, 'Leitura do mês já realizada', 'DOUBLE_REPORT')
@@ -55,18 +54,16 @@ export class CreateMeasureUseCase {
     validDate: string,
   ): Promise<Measure> {
     const measureDate = new Date(validDate)
-    const measure = new Measure({
-      measureUuid: uuid(),
-      customerCode: data.customer_code,
-      measureDatetime: measureDate,
-      measureType: data.measure_type as MeasureType,
-      hasConfirmed: false,
-    })
+    const measure = Measure.create(
+      data.customer_code,
+      data.measure_type,
+      measureDate,
+    )
 
     const { text: value, uri: imageUrl } = await geminiProvider(data.image)
 
     measure.imageUrl = imageUrl
-    measure.measureValue = this.parseAndValidateMeasureValue(value)
+    measure.value = this.parseAndValidateMeasureValue(value)
 
     return measure
   }
@@ -74,8 +71,8 @@ export class CreateMeasureUseCase {
   private buildCreateOutputDTO(measure: Measure): CreateOutputDTO {
     return {
       image_url: measure.imageUrl,
-      measure_value: measure.measureValue,
-      measure_uuid: measure.measureUuid,
+      measure_value: measure.value,
+      measure_uuid: measure.id,
     }
   }
 

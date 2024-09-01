@@ -1,8 +1,8 @@
 import validator from 'validator'
 import { SendError } from '../../common/errors/SendError'
 import { PatchInputDTO } from './PatchMeasureDTO'
-import { Measure } from '../../entities/Measure'
 import { IMeasureRepository } from '../../repositories/IMeasureRepository'
+import { Measure } from '../../entities/Measure'
 
 export class PatchMeasureUseCase {
   constructor(private readonly measureRepository: IMeasureRepository) {}
@@ -48,7 +48,16 @@ export class PatchMeasureUseCase {
   }
 
   private async findMeasureByUuid(measureUuid: string): Promise<Measure> {
-    const measure = await this.measureRepository.findMeasureByUuid(measureUuid)
+    const measure = await this.measureRepository.findById(measureUuid)
+
+    if (!measure) {
+      throw new SendError(
+        404,
+        'Leitura do mês não encontrada',
+        'MEASURE_NOT_FOUND',
+      )
+    }
+
     return measure
   }
 
@@ -66,6 +75,6 @@ export class PatchMeasureUseCase {
     measureUuid: string,
     confirmedValue: number,
   ): Promise<void> {
-    await this.measureRepository.confirmMeasure(measureUuid, confirmedValue)
+    await this.measureRepository.confirm(measureUuid, confirmedValue)
   }
 }
