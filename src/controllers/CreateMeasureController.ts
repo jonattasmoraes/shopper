@@ -3,7 +3,7 @@ import { AppError } from '../common/errors/AppError'
 import { ErrorHandler } from '../common/errors/ErrorHandler'
 import { InternalServerError } from '../common/errors/InternalServerError'
 import { CreateMeasureUseCase } from '../useCases/implementation/CreateMeasureUseCase'
-import { CreateInputDto, CreateOutputDto } from '../useCases/MeasureUseCaseDto'
+import { CreateInputDto } from '../useCases/MeasureUseCaseDto'
 
 /**
  * @swagger
@@ -48,8 +48,16 @@ export class CreateMeasureController {
 
   async createMeasure(req: Request, res: Response): Promise<void> {
     try {
-      const data: CreateInputDto = req.body
-      const result: CreateOutputDto = await this.measureUseCase.execute(data)
+      const { image, customer_code, measure_type, measure_datetime } = req.body
+
+      const data: CreateInputDto = {
+        image: image,
+        code: customer_code,
+        type: measure_type,
+        datatime: measure_datetime,
+      }
+
+      const result = await this.measureUseCase.execute(data)
       res.status(200).json(result)
     } catch (error: unknown) {
       if (error instanceof AppError) {

@@ -3,7 +3,6 @@ import { PatchMeasureUseCase } from '../useCases/implementation/PatchMeasureUseC
 import { AppError } from '../common/errors/AppError'
 import { InternalServerError } from '../common/errors/InternalServerError'
 import { ErrorHandler } from '../common/errors/ErrorHandler'
-import { PatchInputDto } from '../useCases/MeasureUseCaseDto'
 
 /**
  * @swagger
@@ -60,12 +59,7 @@ export class PatchMeasureController {
     try {
       const { measure_uuid, confirmed_value } = req.body
 
-      const measure: PatchInputDto = {
-        id: measure_uuid,
-        value: confirmed_value,
-      }
-
-      await this.patchMeasureUseCase.execute(measure)
+      await this.patchMeasureUseCase.execute(measure_uuid, confirmed_value)
 
       res.status(200).json({ success: true })
     } catch (error: unknown) {

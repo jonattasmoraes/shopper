@@ -13,9 +13,9 @@ export class CreateMeasureUseCase {
     try {
       this.validateImage(data.image)
 
-      const validDate = this.validateAndFormatDate(data.measure_datetime)
+      const validDate = this.validateAndFormatDate(data.datatime)
 
-      await this.checkIfMeasureAlreadyExists(data, validDate)
+      await this.checkIfMeasureExists(data, validDate)
 
       const measure = await this.buildMeasure(data, validDate)
 
@@ -28,14 +28,11 @@ export class CreateMeasureUseCase {
     }
   }
 
-  private async checkIfMeasureAlreadyExists(
-    data: CreateInputDto,
-    validDate: string,
-  ): Promise<void> {
+  private async checkIfMeasureExists(data: CreateInputDto, validDate: string): Promise<void> {
     const measureDate = new Date(validDate)
     const measureExists = await this.createMeasureRepository.findByData(
-      data.customer_code,
-      data.measure_type,
+      data.code,
+      data.type,
       measureDate,
     )
 
@@ -44,16 +41,9 @@ export class CreateMeasureUseCase {
     }
   }
 
-  private async buildMeasure(
-    data: CreateInputDto,
-    validDate: string,
-  ): Promise<Measure> {
+  private async buildMeasure(data: CreateInputDto, validDate: string): Promise<Measure> {
     const measureDate = new Date(validDate)
-    const measure = Measure.create(
-      data.customer_code,
-      data.measure_type,
-      measureDate,
-    )
+    const measure = Measure.create(data.code, data.type, measureDate)
 
     const { text: value, uri: imageUrl } = await geminiProvider(data.image)
 

@@ -2,18 +2,17 @@ import validator from 'validator'
 import { IMeasureRepository } from '../../repositories/IMeasureRepository'
 import { Measure } from '../../entities/Measure'
 import { ClientError } from '../../common/errors/BaseError'
-import { PatchInputDto } from '../MeasureUseCaseDto'
 
 export class PatchMeasureUseCase {
   constructor(private readonly measureRepository: IMeasureRepository) {}
 
-  async execute(data: PatchInputDto): Promise<void> {
+  async execute(id: string, value: number): Promise<void> {
     try {
-      this.validateId(data.id)
+      this.validateId(id)
 
-      const measure = await this.findMeasureById(data.id)
+      const measure = await this.findMeasureById(id)
 
-      this.updateValue(measure, data.value)
+      this.updateValue(measure, value)
 
       this.validateValueIsConfirmed(measure)
 
@@ -38,11 +37,7 @@ export class PatchMeasureUseCase {
     const measure = await this.measureRepository.findById(id)
 
     if (!measure) {
-      throw new ClientError(
-        404,
-        'MEASURE_NOT_FOUND',
-        'Leitura do mês não encontrada.',
-      )
+      throw new ClientError(404, 'MEASURE_NOT_FOUND', 'Leitura do mês não encontrada.')
     }
 
     return measure
@@ -55,11 +50,7 @@ export class PatchMeasureUseCase {
   private validateValueIsConfirmed(measure: Measure): void {
     console.log(measure.hasConfirmed)
     if (measure.hasConfirmed) {
-      throw new ClientError(
-        409,
-        'Leitura do mês já confirmada',
-        'CONFIRMATION_DUPLICATE',
-      )
+      throw new ClientError(409, 'Leitura do mês já confirmada', 'CONFIRMATION_DUPLICATE')
     }
   }
 }
