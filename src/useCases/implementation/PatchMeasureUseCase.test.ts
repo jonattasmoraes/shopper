@@ -1,5 +1,5 @@
 import { PatchMeasureUseCase } from './PatchMeasureUseCase'
-import { PatchInputDTO } from './PatchMeasureDTO'
+import { PatchInputDTO } from '../patchMeasureUseCase/PatchMeasureDTO'
 import { IMeasureRepository } from '../../repositories/IMeasureRepository'
 import { Measure } from '../../entities/Measure'
 

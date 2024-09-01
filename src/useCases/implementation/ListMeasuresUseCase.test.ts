@@ -1,7 +1,7 @@
-import { IMeasureRepository } from '../../entities/IMeasureRepository'
 import { Measure } from '../../entities/Measure'
 import { ListMeasuresUseCase } from './ListMeasuresUseCase'
-import { MeasureDTO } from './ListMeasuresDTO'
+import { MeasureDTO } from '../listMeasuresUseCase/ListMeasuresDTO'
+import { IMeasureRepository } from '../../repositories/IMeasureRepository'
 
 jest.mock('../../common/errors/SendError')
 jest.mock('../../domain/IMeasureRepository')
@@ -26,27 +26,15 @@ describe('ListMeasuresUseCase', () => {
     it('should return measures data if type is valid', async () => {
       const code = '123'
       const type = 'WATER'
-      const measures = [
-        new Measure({
-          measureUuid: '9272b6a4-34ab-41f8-9dda-df8cc242abc0',
-          customerCode: code,
-          measureDatetime: new Date(),
-          measureType: type,
-          measureValue: 100,
-          imageUrl: 'http://example.com/image.jpg',
-          hasConfirmed: true,
-        }),
-      ]
+      const measures = [Measure.create('123', 'WATER', new Date())]
 
       const expectedDTOs: MeasureDTO[] = measures.map((measure) => ({
-        measure_uuid: measure.measureUuid,
-        measure_datetime: measure.measureDatetime,
-        measure_type: measure.measureType,
+        id: measure.id,
         has_confirmed: measure.hasConfirmed,
         image_url: measure.imageUrl,
       }))
 
-      listMeasureRepository.listMeasures.mockResolvedValue(measures)
+      listMeasureRepository.list.mockResolvedValue(measures)
 
       const result = await useCase.execute(code, type)
 
@@ -54,17 +42,14 @@ describe('ListMeasuresUseCase', () => {
         customer_code: code,
         measures: expectedDTOs,
       })
-      expect(listMeasureRepository.listMeasures).toHaveBeenCalledWith(
-        code,
-        type,
-      )
+      expect(listMeasureRepository.list).toHaveBeenCalledWith(code, type)
     })
 
     it('should throw an error if the repository throws an error', async () => {
       const code = '123'
       const type = 'WATER'
 
-      listMeasureRepository.listMeasures.mockRejectedValue(
+      listMeasureRepository.list.mockRejectedValue(
         new Error('Repository error'),
       )
 

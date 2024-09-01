@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
-import { PatchInputDTO } from '../useCases/patchMeasureUseCase/PatchMeasureDTO'
-import { PatchMeasureUseCase } from '../useCases/patchMeasureUseCase/PatchMeasureUseCase'
+import { PatchMeasureUseCase } from '../useCases/implementation/PatchMeasureUseCase'
 import { AppError } from '../common/errors/AppError'
 import { InternalServerError } from '../common/errors/InternalServerError'
 import { ErrorHandler } from '../common/errors/ErrorHandler'
+import { PatchInputDto } from '../useCases/MeasureUseCaseDto'
 
 /**
  * @swagger
@@ -60,7 +60,7 @@ export class PatchMeasureController {
     try {
       const { measure_uuid, confirmed_value } = req.body
 
-      const measure: PatchInputDTO = {
+      const measure: PatchInputDto = {
         id: measure_uuid,
         value: confirmed_value,
       }

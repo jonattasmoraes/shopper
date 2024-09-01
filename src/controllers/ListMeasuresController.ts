@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { ListMeasuresUseCase } from '../useCases/listMeasuresUseCase/ListMeasuresUseCase'
+import { ListMeasuresUseCase } from '../useCases/implementation/ListMeasuresUseCase'
 import { ErrorHandler } from '../common/errors/ErrorHandler'
 import { InternalServerError } from '../common/errors/InternalServerError'
 import { AppError } from '../common/errors/AppError'

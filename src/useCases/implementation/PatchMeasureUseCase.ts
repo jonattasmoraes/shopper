@@ -1,13 +1,13 @@
 import validator from 'validator'
-import { PatchInputDTO } from './PatchMeasureDTO'
 import { IMeasureRepository } from '../../repositories/IMeasureRepository'
 import { Measure } from '../../entities/Measure'
 import { ClientError } from '../../common/errors/BaseError'
+import { PatchInputDto } from '../MeasureUseCaseDto'
 
 export class PatchMeasureUseCase {
   constructor(private readonly measureRepository: IMeasureRepository) {}
 
-  async execute(data: PatchInputDTO): Promise<void> {
+  async execute(data: PatchInputDto): Promise<void> {
     try {
       this.validateId(data.id)
 

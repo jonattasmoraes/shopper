@@ -2,30 +2,25 @@ import moment from 'moment'
 import validator from 'validator'
 import { SendError } from '../../common/errors/SendError'
 import { geminiProvider } from '../../config/GeminiProvider'
-import { CreateInputDTO, CreateOutputDTO } from './CreateMeasureDTO'
+import { CreateInputDto, CreateOutputDto } from '../MeasureUseCaseDto'
 import { IMeasureRepository } from '../../repositories/IMeasureRepository'
 import { Measure } from '../../entities/Measure'
 
 export class CreateMeasureUseCase {
   constructor(private readonly createMeasureRepository: IMeasureRepository) {}
 
-  async execute(data: CreateInputDTO): Promise<CreateOutputDTO> {
+  async execute(data: CreateInputDto): Promise<CreateOutputDto> {
     try {
       this.validateImage(data.image)
 
-      // Valida e formata a data
       const validDate = this.validateAndFormatDate(data.measure_datetime)
 
-      // Verifica se a medida já existe
       await this.checkIfMeasureAlreadyExists(data, validDate)
 
-      // Cria o objeto Measure e obtém os valores adicionais
       const measure = await this.buildMeasure(data, validDate)
 
-      // Salva a medida no repositório
       await this.createMeasureRepository.save(measure)
 
-      // Constrói e retorna o DTO de saída
       return this.buildCreateOutputDTO(measure)
     } catch (error) {
       console.error('Error:', error)
@@ -34,7 +29,7 @@ export class CreateMeasureUseCase {
   }
 
   private async checkIfMeasureAlreadyExists(
-    data: CreateInputDTO,
+    data: CreateInputDto,
     validDate: string,
   ): Promise<void> {
     const measureDate = new Date(validDate)
@@ -50,7 +45,7 @@ export class CreateMeasureUseCase {
   }
 
   private async buildMeasure(
-    data: CreateInputDTO,
+    data: CreateInputDto,
     validDate: string,
   ): Promise<Measure> {
     const measureDate = new Date(validDate)
@@ -68,7 +63,7 @@ export class CreateMeasureUseCase {
     return measure
   }
 
-  private buildCreateOutputDTO(measure: Measure): CreateOutputDTO {
+  private buildCreateOutputDTO(measure: Measure): CreateOutputDto {
     return {
       image_url: measure.imageUrl,
       measure_value: measure.value,
