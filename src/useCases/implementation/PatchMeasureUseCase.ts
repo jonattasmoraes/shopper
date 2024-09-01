@@ -3,9 +3,14 @@ import { IMeasureRepository } from '../../repositories/IMeasureRepository'
 import { Measure } from '../../entities/Measure'
 import { ClientError } from '../../common/errors/BaseError'
 import { IConfirmUseCase } from '../IMeasureUseCase'
+import { MeasureRepositoryPostgresImpl } from '../../repositories/postgres/MeasureRepositoryPostgresImpl'
 
 export class PatchMeasureUseCase implements IConfirmUseCase {
-  constructor(private readonly measureRepository: IMeasureRepository) {}
+  private constructor(readonly repository: IMeasureRepository) {}
+
+  public static build(repository: MeasureRepositoryPostgresImpl) {
+    return new PatchMeasureUseCase(repository)
+  }
 
   async execute(id: string, value: number): Promise<void> {
     try {
@@ -17,7 +22,7 @@ export class PatchMeasureUseCase implements IConfirmUseCase {
 
       this.validateValueIsConfirmed(measure)
 
-      await this.measureRepository.confirm(measure.id, measure.value)
+      await this.repository.confirm(measure.id, measure.value)
     } catch (error) {
       console.error('Error updating measure:', error)
       throw error
@@ -35,7 +40,7 @@ export class PatchMeasureUseCase implements IConfirmUseCase {
   }
 
   private async findMeasureById(id: string): Promise<Measure> {
-    const measure = await this.measureRepository.findById(id)
+    const measure = await this.repository.findById(id)
 
     if (!measure) {
       throw new ClientError(404, 'MEASURE_NOT_FOUND', 'Leitura do mês não encontrada.')

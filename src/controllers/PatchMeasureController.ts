@@ -1,8 +1,10 @@
 import { Request, Response } from 'express'
 import { PatchMeasureUseCase } from '../useCases/implementation/PatchMeasureUseCase'
 import { AppError } from '../common/errors/AppError'
+import { MeasureRepositoryPostgresImpl } from '../repositories/postgres/MeasureRepositoryPostgresImpl'
 import { InternalServerError } from '../common/errors/InternalServerError'
 import { ErrorHandler } from '../common/errors/ErrorHandler'
+import { pool } from '../config/Postgres'
 
 /**
  * @swagger
@@ -52,14 +54,21 @@ import { ErrorHandler } from '../common/errors/ErrorHandler'
  *             schema:
  *               $ref: '#/components/schemas/ErrorDTO'
  */
-export class PatchMeasureController {
-  constructor(private readonly patchMeasureUseCase: PatchMeasureUseCase) {}
+export class ConfirmMeasureController {
+  constructor() {}
 
-  async updateMeasure(req: Request, res: Response): Promise<void> {
+  public static build() {
+    return new ConfirmMeasureController()
+  }
+
+  async confirm(req: Request, res: Response): Promise<void> {
     try {
       const { measure_uuid, confirmed_value } = req.body
 
-      await this.patchMeasureUseCase.execute(measure_uuid, confirmed_value)
+      const repository = MeasureRepositoryPostgresImpl.build(pool)
+      const useCase = PatchMeasureUseCase.build(repository)
+
+      await useCase.execute(measure_uuid, confirmed_value)
 
       res.status(200).json({ success: true })
     } catch (error: unknown) {

@@ -52,7 +52,7 @@ export class CreateMeasureController {
     return new CreateMeasureController()
   }
 
-  async createMeasure(req: Request, res: Response): Promise<void> {
+  async create(req: Request, res: Response): Promise<void> {
     try {
       const { image, customer_code, measure_type, measure_datetime } = req.body
 
