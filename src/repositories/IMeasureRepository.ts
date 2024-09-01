@@ -1,4 +1,4 @@
-import { Measure } from './Measure'
+import { Measure } from '../entities/Measure'
 
 export interface IMeasureRepository {
   save(measure: Measure): Promise<void>
