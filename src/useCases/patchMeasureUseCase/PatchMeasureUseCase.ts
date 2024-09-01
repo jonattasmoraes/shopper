@@ -1,80 +1,65 @@
 import validator from 'validator'
-import { SendError } from '../../common/errors/SendError'
 import { PatchInputDTO } from './PatchMeasureDTO'
 import { IMeasureRepository } from '../../repositories/IMeasureRepository'
 import { Measure } from '../../entities/Measure'
+import { ClientError } from '../../common/errors/BaseError'
 
 export class PatchMeasureUseCase {
   constructor(private readonly measureRepository: IMeasureRepository) {}
 
   async execute(data: PatchInputDTO): Promise<void> {
     try {
-      this.validateInputData(data)
+      this.validateId(data.id)
 
-      const measure = await this.findMeasureByUuid(data.measure_uuid)
+      const measure = await this.findMeasureById(data.id)
 
-      this.ensureMeasureNotConfirmed(measure)
+      this.updateValue(measure, data.value)
 
-      await this.confirmMeasure(data.measure_uuid, data.confirmed_value)
+      this.validateValueIsConfirmed(measure)
+
+      await this.measureRepository.confirm(measure.id, measure.value)
     } catch (error) {
       console.error('Error updating measure:', error)
       throw error
     }
   }
 
-  private validateInputData(data: PatchInputDTO): void {
-    this.validateMeasureUuid(data.measure_uuid)
-    this.validateConfirmedValue(data.confirmed_value)
-  }
-
-  private validateMeasureUuid(measureUuid: string): void {
-    if (!measureUuid || !validator.isUUID(measureUuid)) {
-      throw new SendError(
+  private validateId(id: string): void {
+    if (!id || !validator.isUUID(id)) {
+      throw new ClientError(
         400,
+        'INVALID_DATA',
         'O measure_uuid informado é inválido. Por favor, revise os dados e tente novamente.',
-        'INVALID_DATA',
       )
     }
   }
 
-  private validateConfirmedValue(confirmedValue: number): void {
-    if (!Number.isInteger(confirmedValue) || confirmedValue <= 0) {
-      throw new SendError(
-        400,
-        'O confirmed_value deve ser um número inteiro e maior que 0. Por favor, revise os dados e tente novamente.',
-        'INVALID_DATA',
-      )
-    }
-  }
-
-  private async findMeasureByUuid(measureUuid: string): Promise<Measure> {
-    const measure = await this.measureRepository.findById(measureUuid)
+  private async findMeasureById(id: string): Promise<Measure> {
+    const measure = await this.measureRepository.findById(id)
 
     if (!measure) {
-      throw new SendError(
+      throw new ClientError(
         404,
-        'Leitura do mês não encontrada',
         'MEASURE_NOT_FOUND',
+        'Leitura do mês não encontrada.',
       )
     }
 
     return measure
   }
 
-  private ensureMeasureNotConfirmed(measure: Measure): void {
+  private updateValue(measure: Measure, value: number): void {
+    measure.value = value
+  }
+
+  private validateValueIsConfirmed(measure: Measure): void {
+    console.log(measure.hasConfirmed)
     if (measure.hasConfirmed) {
-      throw new SendError(
+      throw new ClientError(
         409,
         'Leitura do mês já confirmada',
         'CONFIRMATION_DUPLICATE',
       )
     }
-  }
-
-  private async confirmMeasure(
-    measureUuid: string,
-    confirmedValue: number,
-  ): Promise<void> {
-    await this.measureRepository.confirm(measureUuid, confirmedValue)
   }
 }

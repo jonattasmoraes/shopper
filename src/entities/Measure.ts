@@ -1,6 +1,7 @@
 import { v4 as uuid } from 'uuid'
 import moment from 'moment'
 import { SendError } from '../common/errors/SendError'
+import { ClientError } from '../common/errors/BaseError'
 
 type MeasureProps = {
   id: string
@@ -10,7 +11,6 @@ type MeasureProps = {
   imageUrl: string
   value: number
   hasConfirmed: boolean
-  confirmedValue?: number
 }
 
 export class Measure {
@@ -78,39 +78,46 @@ export class Measure {
     }
   }
 
-  get id() {
+  public get id() {
     return this.props.id
   }
 
-  get customerCode() {
+  public get customerCode() {
     return this.props.customerCode
   }
 
-  get dataTime() {
+  public get dataTime() {
     return this.props.dataTime
   }
 
-  get type() {
+  public get type() {
     return this.props.type
   }
 
-  get imageUrl() {
+  public get imageUrl() {
     return this.props.imageUrl
   }
 
-  set imageUrl(imageUrl: string) {
+  public set imageUrl(imageUrl: string) {
     this.props.imageUrl = imageUrl
   }
 
-  get value() {
+  public get value() {
     return this.props.value
   }
 
-  set value(value: number) {
+  public set value(value: number) {
+    if (!Number.isInteger(value) || value <= 0) {
+      throw new ClientError(
+        400,
+        'O confirmed_value deve ser um número inteiro e maior que 0. Por favor, revise os dados e tente novamente.',
+        'INVALID_DATA',
+      )
+    }
     this.props.value = value
   }
 
-  get hasConfirmed() {
+  public get hasConfirmed() {
     return this.props.hasConfirmed
   }
 }

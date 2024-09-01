@@ -1,4 +1,4 @@
 export type PatchInputDTO = {
-  measure_uuid: string
-  confirmed_value: number
+  id: string
+  value: number
 }

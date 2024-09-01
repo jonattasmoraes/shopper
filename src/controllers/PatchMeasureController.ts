@@ -58,9 +58,14 @@ export class PatchMeasureController {
 
   async updateMeasure(req: Request, res: Response): Promise<void> {
     try {
-      const data: PatchInputDTO = req.body
+      const { measure_uuid, confirmed_value } = req.body
 
-      await this.patchMeasureUseCase.execute(data)
+      const measure: PatchInputDTO = {
+        id: measure_uuid,
+        value: confirmed_value,
+      }
+
+      await this.patchMeasureUseCase.execute(measure)
 
       res.status(200).json({ success: true })
     } catch (error: unknown) {
