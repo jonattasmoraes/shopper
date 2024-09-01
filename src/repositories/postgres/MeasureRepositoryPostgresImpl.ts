@@ -44,23 +44,34 @@ export class MeasureRepositoryPostgresImpl implements IMeasureRepository {
     type: string,
     date: Date,
   ): Promise<Measure | null> {
-    const measureMonth = moment(date).format('YYYY-MM')
-    const query = `
-      SELECT *
-      FROM measures
-      WHERE customer_code = $1
-      AND TO_CHAR(measure_datetime, 'YYYY-MM') = $2
-      AND measure_type = $3
-    `
-
     try {
+      const measureMonth = moment(date).format('YYYY-MM')
+      const query = `
+        SELECT *
+        FROM measures
+        WHERE customer_code = $1
+        AND TO_CHAR(measure_datetime, 'YYYY-MM') = $2
+        AND measure_type = $3
+      `
+
       const { rows } = await this.db.query(query, [code, measureMonth, type])
 
       if (rows.length === 0) {
         return null
       }
 
-      return rows[0]
+      const data = rows[0]
+      const measure = Measure.with(
+        data.measure_uuid,
+        data.customer_code,
+        data.measure_datetime,
+        data.measure_type,
+        data.image_url,
+        data.measure_value,
+        data.has_confirmed,
+      )
+
+      return measure
     } catch (error) {
       console.error('Error finding measure by customer code and date: ', error)
       throw error
@@ -70,8 +81,9 @@ export class MeasureRepositoryPostgresImpl implements IMeasureRepository {
   async findById(id: string): Promise<Measure | null> {
     try {
       const query = `
-      SELECT * FROM measures
-      WHERE measure_uuid = $1`
+        SELECT * FROM measures
+        WHERE measure_uuid = $1
+        LIMIT 1`
 
       const { rows } = await this.db.query(query, [id])
 
@@ -79,7 +91,18 @@ export class MeasureRepositoryPostgresImpl implements IMeasureRepository {
         return null
       }
 
-      return rows[0]
+      const data = rows[0]
+      const measure = Measure.with(
+        data.measure_uuid,
+        data.customer_code,
+        data.measure_datetime,
+        data.measure_type,
+        data.image_url,
+        data.measure_value,
+        data.has_confirmed,
+      )
+
+      return measure
     } catch (error: unknown) {
       console.error('Error finding measure by ID: ', error)
       throw error
