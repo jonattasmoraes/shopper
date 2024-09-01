@@ -3,6 +3,8 @@ import { ListMeasuresUseCase } from '../useCases/implementation/ListMeasuresUseC
 import { ErrorHandler } from '../common/errors/ErrorHandler'
 import { InternalServerError } from '../common/errors/InternalServerError'
 import { AppError } from '../common/errors/AppError'
+import { MeasureRepositoryPostgresImpl } from '../repositories/postgres/MeasureRepositoryPostgresImpl'
+import { pool } from '../config/Postgres'
 
 /**
  * @swagger
@@ -62,17 +64,21 @@ import { AppError } from '../common/errors/AppError'
  *               $ref: '#/components/schemas/ErrorDTO'
  */
 export class ListMeasureController {
-  constructor(private readonly listMeasuresUseCase: ListMeasuresUseCase) {}
+  constructor() {}
 
-  async listMeasures(req: Request, res: Response): Promise<void> {
+  public static build() {
+    return new ListMeasureController()
+  }
+
+  async list(req: Request, res: Response): Promise<void> {
     try {
       const customerCode = req.params.customerCode
       const measureType = req.query.measure_type as string
 
-      const measures = await this.listMeasuresUseCase.execute(
-        customerCode,
-        measureType,
-      )
+      const repository = MeasureRepositoryPostgresImpl.build(pool)
+      const useCase = ListMeasuresUseCase.build(repository)
+
+      const measures = await useCase.execute(customerCode, measureType)
       res.status(200).json(measures)
     } catch (error: unknown) {
       if (error instanceof AppError) {

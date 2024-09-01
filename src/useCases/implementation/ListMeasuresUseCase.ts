@@ -1,11 +1,16 @@
 import { ClientError } from '../../common/errors/BaseError'
 import { Measure } from '../../entities/Measure'
 import { IMeasureRepository } from '../../repositories/IMeasureRepository'
+import { MeasureRepositoryPostgresImpl } from '../../repositories/postgres/MeasureRepositoryPostgresImpl'
 import { IListUseCase } from '../IMeasureUseCase'
 import { ListMeasuresDto, MeasureDto } from '../MeasureUseCaseDto'
 
 export class ListMeasuresUseCase implements IListUseCase {
-  constructor(private readonly measureRepository: IMeasureRepository) {}
+  private constructor(readonly repository: IMeasureRepository) {}
+
+  public static build(repository: MeasureRepositoryPostgresImpl) {
+    return new ListMeasuresUseCase(repository)
+  }
 
   async execute(customerCode: string, type?: string): Promise<ListMeasuresDto> {
     this.validateType(type)
@@ -28,7 +33,7 @@ export class ListMeasuresUseCase implements IListUseCase {
   }
 
   private async fetchMeasures(customerCode: string, type?: string): Promise<Measure[]> {
-    const measures = await this.measureRepository.list(customerCode, type)
+    const measures = await this.repository.list(customerCode, type)
     if (!measures || measures.length === 0) {
       throw new ClientError(404, 'MEASURES_NOT_FOUND', 'Nenhuma leitura encontrada')
     }
