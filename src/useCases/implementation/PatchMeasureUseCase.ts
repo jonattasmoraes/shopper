@@ -2,8 +2,9 @@ import validator from 'validator'
 import { IMeasureRepository } from '../../repositories/IMeasureRepository'
 import { Measure } from '../../entities/Measure'
 import { ClientError } from '../../common/errors/BaseError'
+import { IConfirmUseCase } from '../IMeasureUseCase'
 
-export class PatchMeasureUseCase {
+export class PatchMeasureUseCase implements IConfirmUseCase {
   constructor(private readonly measureRepository: IMeasureRepository) {}
 
   async execute(id: string, value: number): Promise<void> {

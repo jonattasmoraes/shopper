@@ -1,13 +1,20 @@
 import moment from 'moment'
+import { Pool } from 'pg'
 import validator from 'validator'
 import { SendError } from '../../common/errors/SendError'
 import { geminiProvider } from '../../config/GeminiProvider'
 import { CreateInputDto, CreateOutputDto } from '../MeasureUseCaseDto'
 import { IMeasureRepository } from '../../repositories/IMeasureRepository'
 import { Measure } from '../../entities/Measure'
+import { ICreateUseCase } from '../IMeasureUseCase'
+import { MeasureRepositoryPostgresImpl } from '../../repositories/postgres/MeasureRepositoryPostgresImpl'
 
-export class CreateMeasureUseCase {
-  constructor(private readonly createMeasureRepository: IMeasureRepository) {}
+export class CreateMeasureUseCase implements ICreateUseCase {
+  public constructor(readonly repository: IMeasureRepository) {}
+
+  public static build(pool: Pool) {
+    return new MeasureRepositoryPostgresImpl(pool)
+  }
 
   async execute(data: CreateInputDto): Promise<CreateOutputDto> {
     try {
@@ -19,7 +26,7 @@ export class CreateMeasureUseCase {
 
       const measure = await this.buildMeasure(data, validDate)
 
-      await this.createMeasureRepository.save(measure)
+      await this.repository.save(measure)
 
       return this.buildCreateOutputDTO(measure)
     } catch (error) {
@@ -30,11 +37,7 @@ export class CreateMeasureUseCase {
 
   private async checkIfMeasureExists(data: CreateInputDto, validDate: string): Promise<void> {
     const measureDate = new Date(validDate)
-    const measureExists = await this.createMeasureRepository.findByData(
-      data.code,
-      data.type,
-      measureDate,
-    )
+    const measureExists = await this.repository.findByData(data.code, data.type, measureDate)
 
     if (measureExists) {
       throw new SendError(409, 'Leitura do mês já realizada', 'DOUBLE_REPORT')

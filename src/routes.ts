@@ -29,9 +29,7 @@ const listController = new ListMeasureController(listUseCase)
 // Routes
 router.post('/upload', (req, res) => createController.createMeasure(req, res))
 router.patch('/confirm', (req, res) => patchController.updateMeasure(req, res))
-router.get('/:customerCode/list', (req, res) =>
-  listController.listMeasures(req, res),
-)
+router.get('/:customerCode/list', (req, res) => listController.listMeasures(req, res))
 router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerHandler))
 
 export default router
