@@ -4,7 +4,7 @@ import { IMeasureRepository } from '../../repositories/IMeasureRepository'
 import { Measure } from '../../entities/Measure'
 
 export class MeasureRepositoryPostgresImpl implements IMeasureRepository {
-  public constructor(readonly db: Pool) {}
+  private constructor(readonly db: Pool) {}
 
   public static build(db: Pool): MeasureRepositoryPostgresImpl {
     return new MeasureRepositoryPostgresImpl(db)
@@ -39,11 +39,7 @@ export class MeasureRepositoryPostgresImpl implements IMeasureRepository {
     }
   }
 
-  async findByData(
-    code: string,
-    type: string,
-    date: Date,
-  ): Promise<Measure | null> {
+  async findByData(code: string, type: string, date: Date): Promise<Measure | null> {
     try {
       const measureMonth = moment(date).format('YYYY-MM')
       const query = `

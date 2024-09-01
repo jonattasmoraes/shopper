@@ -4,6 +4,8 @@ import { ErrorHandler } from '../common/errors/ErrorHandler'
 import { InternalServerError } from '../common/errors/InternalServerError'
 import { CreateMeasureUseCase } from '../useCases/implementation/CreateMeasureUseCase'
 import { CreateInputDto } from '../useCases/MeasureUseCaseDto'
+import { MeasureRepositoryPostgresImpl } from '../repositories/postgres/MeasureRepositoryPostgresImpl'
+import { pool } from '../config/Postgres'
 
 /**
  * @swagger
@@ -44,11 +46,18 @@ import { CreateInputDto } from '../useCases/MeasureUseCaseDto'
  *               $ref: '#/components/schemas/ErrorDTO'
  */
 export class CreateMeasureController {
-  constructor(private readonly measureUseCase: CreateMeasureUseCase) {}
+  constructor() {}
+
+  public static build() {
+    return new CreateMeasureController()
+  }
 
   async createMeasure(req: Request, res: Response): Promise<void> {
     try {
       const { image, customer_code, measure_type, measure_datetime } = req.body
+
+      const repository = MeasureRepositoryPostgresImpl.build(pool)
+      const useCase = CreateMeasureUseCase.build(repository)
 
       const data: CreateInputDto = {
         image: image,
@@ -57,7 +66,7 @@ export class CreateMeasureController {
         datatime: measure_datetime,
       }
 
-      const result = await this.measureUseCase.execute(data)
+      const result = await useCase.execute(data)
       res.status(200).json(result)
     } catch (error: unknown) {
       if (error instanceof AppError) {
