@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define as branches
-BRANCHES=("refactor/general" "refactor/structure")
+BRANCHES=("refactor/general" "refactor/structure" "feat/general-updates")
 INTEGRATION_BRANCH="integration"
 MAIN_BRANCH="main"
 

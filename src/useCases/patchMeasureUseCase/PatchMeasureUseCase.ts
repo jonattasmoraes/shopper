@@ -25,7 +25,7 @@ export class PatchMeasureUseCase {
   }
 
   private validateId(id: string): void {
-    if (!id || !validator.isUUID(id)) {
+    if (!id || typeof id !== 'string' || !validator.isUUID(id)) {
       throw new ClientError(
         400,
         'INVALID_DATA',
