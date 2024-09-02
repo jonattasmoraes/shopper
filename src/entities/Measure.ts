@@ -63,8 +63,8 @@ export class Measure {
     if (!type || (type !== 'WATER' && type !== 'GAS')) {
       throw new ClientError(
         400,
-        'INVALID_TYPE',
         'O measure_type não foi informado ou é diferente de WATE e GAS, por favor revise os dados e tente novamente',
+        'INVALID_TYPE',
       )
     }
 

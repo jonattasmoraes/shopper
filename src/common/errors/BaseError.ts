@@ -17,7 +17,7 @@ export class BaseError extends Error {
 
 export class ClientError extends BaseError {
   constructor(statusCode: number, errorCode: string, errorDescription: string) {
-    super(statusCode, errorCode, errorDescription)
+    super(statusCode, errorDescription, errorCode)
   }
 }
 
