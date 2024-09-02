@@ -1,6 +1,5 @@
 import { v4 as uuid } from 'uuid'
 import moment from 'moment'
-import { SendError } from '../common/errors/SendError'
 import { ClientError } from '../common/errors/BaseError'
 
 type MeasureProps = {
@@ -54,7 +53,7 @@ export class Measure {
 
   static validator(customerCode: string, type: string, dataTime: Date) {
     if (!customerCode || typeof customerCode !== 'string') {
-      throw new SendError(
+      throw new ClientError(
         400,
         'O customer_code nao foi informado ou é invalido, por favor revise os dados e tente novamente',
         'INVALID_DATA',
@@ -62,7 +61,7 @@ export class Measure {
     }
 
     if (!type || (type !== 'WATER' && type !== 'GAS')) {
-      throw new SendError(
+      throw new ClientError(
         400,
         'INVALID_TYPE',
         'O measure_type não foi informado ou é diferente de WATE e GAS, por favor revise os dados e tente novamente',
@@ -70,7 +69,7 @@ export class Measure {
     }
 
     if (!dataTime || !moment(dataTime).isValid()) {
-      throw new SendError(
+      throw new ClientError(
         400,
         'O measure_datetime não foi informado ou é inválido, por favor revise os dados e tente novamente',
         'INVALID_DATA',

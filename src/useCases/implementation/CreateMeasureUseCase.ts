@@ -1,12 +1,12 @@
 import moment from 'moment'
 import validator from 'validator'
-import { SendError } from '../../common/errors/SendError'
 import { geminiProvider } from '../../config/GeminiProvider'
 import { CreateInputDto, CreateOutputDto } from '../MeasureUseCaseDto'
 import { IMeasureRepository } from '../../repositories/IMeasureRepository'
 import { Measure } from '../../entities/Measure'
 import { ICreateUseCase } from '../IMeasureUseCase'
 import { MeasureRepositoryPostgresImpl } from '../../repositories/postgres/MeasureRepositoryPostgresImpl'
+import { ClientError } from '../../common/errors/BaseError'
 
 export class CreateMeasureUseCase implements ICreateUseCase {
   private constructor(readonly repository: IMeasureRepository) {}
@@ -39,7 +39,7 @@ export class CreateMeasureUseCase implements ICreateUseCase {
     const measureExists = await this.repository.findByData(data.code, data.type, measureDate)
 
     if (measureExists) {
-      throw new SendError(409, 'Leitura do mês já realizada', 'DOUBLE_REPORT')
+      throw new ClientError(409, 'Leitura do mês já realizada', 'DOUBLE_REPORT')
     }
   }
 
@@ -67,7 +67,7 @@ export class CreateMeasureUseCase implements ICreateUseCase {
     const parsedDate = moment(date)
 
     if (!parsedDate.isValid()) {
-      throw new SendError(
+      throw new ClientError(
         400,
         'O measure_datetime não foi informado ou é inválido, por favor revise os dados e tente novamente',
         'INVALID_DATA',
@@ -80,7 +80,7 @@ export class CreateMeasureUseCase implements ICreateUseCase {
   private parseAndValidateMeasureValue(text: string): number {
     const measureValue = parseInt(text, 10)
     if (isNaN(measureValue)) {
-      throw new SendError(
+      throw new ClientError(
         400,
         'Não foi possível parsear o valor da medida, por favor revise os dados e tente novamente',
         'INVALID_DATA',
@@ -91,7 +91,7 @@ export class CreateMeasureUseCase implements ICreateUseCase {
 
   private validateImage(image: string): void {
     if (!image || !this.isValidBase64(image)) {
-      throw new SendError(
+      throw new ClientError(
         400,
         'A imagem é obrigatória e deve ser uma imagem base64, por favor revise os dados e tente novamente',
         'INVALID_DATA',

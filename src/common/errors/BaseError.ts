@@ -1,3 +1,5 @@
+import { Response } from 'express'
+
 export class BaseError extends Error {
   public statusCode: number
   public errorCode: string
@@ -17,4 +19,11 @@ export class ClientError extends BaseError {
   constructor(statusCode: number, errorCode: string, errorDescription: string) {
     super(statusCode, errorCode, errorDescription)
   }
+}
+
+export function ErrorHandler(res: Response, error: BaseError): void {
+  res.status(error.statusCode).json({
+    error_code: error.errorCode,
+    error_description: error.message,
+  })
 }

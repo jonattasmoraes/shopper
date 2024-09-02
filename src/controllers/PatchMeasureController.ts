@@ -1,10 +1,8 @@
 import { Request, Response } from 'express'
 import { PatchMeasureUseCase } from '../useCases/implementation/PatchMeasureUseCase'
-import { AppError } from '../common/errors/AppError'
 import { MeasureRepositoryPostgresImpl } from '../repositories/postgres/MeasureRepositoryPostgresImpl'
-import { InternalServerError } from '../common/errors/InternalServerError'
-import { ErrorHandler } from '../common/errors/ErrorHandler'
 import { pool } from '../config/Postgres'
+import { BaseError, ErrorHandler } from '../common/errors/BaseError'
 
 /**
  * @swagger
@@ -72,10 +70,13 @@ export class ConfirmMeasureController {
 
       res.status(200).json({ success: true })
     } catch (error: unknown) {
-      if (error instanceof AppError) {
+      if (error instanceof BaseError) {
         ErrorHandler(res, error)
       } else {
-        ErrorHandler(res, new InternalServerError())
+        res.status(500).json({
+          status: 'error',
+          message: 'Internal server error',
+        })
       }
     }
   }
