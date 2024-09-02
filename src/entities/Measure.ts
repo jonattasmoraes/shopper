@@ -55,24 +55,24 @@ export class Measure {
     if (!customerCode || typeof customerCode !== 'string') {
       throw new ClientError(
         400,
-        'O customer_code nao foi informado ou é invalido, por favor revise os dados e tente novamente',
         'INVALID_DATA',
+        'O customer_code nao foi informado ou é invalido, por favor revise os dados e tente novamente',
       )
     }
 
     if (!type || (type !== 'WATER' && type !== 'GAS')) {
       throw new ClientError(
         400,
-        'O measure_type não foi informado ou é diferente de WATE e GAS, por favor revise os dados e tente novamente',
         'INVALID_TYPE',
+        'O measure_type não foi informado ou é diferente de WATE e GAS, por favor revise os dados e tente novamente',
       )
     }
 
     if (!dataTime || !moment(dataTime).isValid()) {
       throw new ClientError(
         400,
-        'O measure_datetime não foi informado ou é inválido, por favor revise os dados e tente novamente',
         'INVALID_DATA',
+        'O measure_datetime não foi informado ou é inválido, por favor revise os dados e tente novamente',
       )
     }
   }
@@ -109,8 +109,8 @@ export class Measure {
     if (!Number.isInteger(value) || value <= 0) {
       throw new ClientError(
         400,
-        'O confirmed_value deve ser um número inteiro e maior que 0. Por favor, revise os dados e tente novamente.',
         'INVALID_DATA',
+        'O confirmed_value deve ser um número inteiro e maior que 0. Por favor, revise os dados e tente novamente.',
       )
     }
     this.props.value = value

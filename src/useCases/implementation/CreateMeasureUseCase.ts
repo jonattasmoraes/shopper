@@ -38,7 +38,7 @@ export class CreateMeasureUseCase implements ICreateUseCase {
     const measureExists = await this.repository.findByData(data.code, data.type, measureDate)
 
     if (measureExists) {
-      throw new ClientError(409, 'Leitura do mês já realizada', 'DOUBLE_REPORT')
+      throw new ClientError(409, 'DOUBLE_REPORT', 'Leitura do mês já realizada')
     }
   }
 
@@ -68,8 +68,8 @@ export class CreateMeasureUseCase implements ICreateUseCase {
     if (!parsedDate.isValid()) {
       throw new ClientError(
         400,
-        'O measure_datetime não foi informado ou é inválido, por favor revise os dados e tente novamente',
         'INVALID_DATA',
+        'O measure_datetime não foi informado ou é inválido, por favor revise os dados e tente novamente',
       )
     }
 
@@ -81,8 +81,8 @@ export class CreateMeasureUseCase implements ICreateUseCase {
     if (isNaN(measureValue)) {
       throw new ClientError(
         400,
-        'Não foi possível parsear o valor da medida, por favor revise os dados e tente novamente',
         'INVALID_DATA',
+        'Não foi possível parsear o valor da medida, por favor revise os dados e tente novamente',
       )
     }
     return measureValue
@@ -92,8 +92,8 @@ export class CreateMeasureUseCase implements ICreateUseCase {
     if (!image || !this.isValidBase64(image)) {
       throw new ClientError(
         400,
-        'A imagem é obrigatória e deve ser uma imagem base64, por favor revise os dados e tente novamente',
         'INVALID_DATA',
+        'A imagem é obrigatória e deve ser uma imagem base64, por favor revise os dados e tente novamente',
       )
     }
   }

@@ -92,10 +92,10 @@ describe('Measure Creation', () => {
 
     expect(() => {
       measure.value = 0
-    }).toThrow(new ClientError(400, SET_VALUE_DESCRIPTION, 'INVALID_VALUE'))
+    }).toThrow(new ClientError(401, 'INVALID_VALUE', SET_VALUE_DESCRIPTION))
 
     expect(() => {
       measure.value = -10
-    }).toThrow(new ClientError(400, SET_VALUE_DESCRIPTION, 'INVALID_VALUE'))
+    }).toThrow(new ClientError(400, 'INVALID_VALUE', SET_VALUE_DESCRIPTION))
   })
 })

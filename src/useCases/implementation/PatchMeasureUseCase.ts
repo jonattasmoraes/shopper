@@ -3,12 +3,11 @@ import { IMeasureRepository } from '../../repositories/IMeasureRepository'
 import { Measure } from '../../entities/Measure'
 import { ClientError } from '../../common/errors/BaseError'
 import { IConfirmUseCase } from '../IMeasureUseCase'
-import { MeasureRepositoryPostgresImpl } from '../../repositories/postgres/MeasureRepositoryPostgresImpl'
 
 export class PatchMeasureUseCase implements IConfirmUseCase {
   private constructor(readonly repository: IMeasureRepository) {}
 
-  public static build(repository: MeasureRepositoryPostgresImpl) {
+  public static build(repository: IMeasureRepository): PatchMeasureUseCase {
     return new PatchMeasureUseCase(repository)
   }
 
