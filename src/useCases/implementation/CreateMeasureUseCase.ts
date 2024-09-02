@@ -5,13 +5,12 @@ import { CreateInputDto, CreateOutputDto } from '../MeasureUseCaseDto'
 import { IMeasureRepository } from '../../repositories/IMeasureRepository'
 import { Measure } from '../../entities/Measure'
 import { ICreateUseCase } from '../IMeasureUseCase'
-import { MeasureRepositoryPostgresImpl } from '../../repositories/postgres/MeasureRepositoryPostgresImpl'
 import { ClientError } from '../../common/errors/BaseError'
 
 export class CreateMeasureUseCase implements ICreateUseCase {
   private constructor(readonly repository: IMeasureRepository) {}
 
-  public static build(repository: MeasureRepositoryPostgresImpl) {
+  public static build(repository: IMeasureRepository): CreateMeasureUseCase {
     return new CreateMeasureUseCase(repository)
   }
 
