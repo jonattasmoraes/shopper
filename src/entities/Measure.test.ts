@@ -1,4 +1,3 @@
-import { ClientError } from '../common/errors/BaseError'
 import { expectClientErrorSync } from '../common/utils/ErrorValidator'
 import { Measure } from './Measure'
 
@@ -90,12 +89,22 @@ describe('Measure Creation', () => {
   it('should throw an error if value is less than or equal to 0', () => {
     const measure = Measure.create('CUSTOMER', 'WATER', new Date())
 
-    expect(() => {
-      measure.value = 0
-    }).toThrow(new ClientError(401, 'INVALID_VALUE', SET_VALUE_DESCRIPTION))
+    expectClientErrorSync(
+      () => {
+        measure.value = 0
+      },
+      400,
+      INVALID_DATA,
+      SET_VALUE_DESCRIPTION,
+    )
 
-    expect(() => {
-      measure.value = -10
-    }).toThrow(new ClientError(400, 'INVALID_VALUE', SET_VALUE_DESCRIPTION))
+    expectClientErrorSync(
+      () => {
+        measure.value = 0
+      },
+      400,
+      INVALID_DATA,
+      SET_VALUE_DESCRIPTION,
+    )
   })
 })

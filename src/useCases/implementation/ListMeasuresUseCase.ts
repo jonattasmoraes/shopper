@@ -1,14 +1,13 @@
 import { ClientError } from '../../common/errors/BaseError'
 import { Measure } from '../../entities/Measure'
 import { IMeasureRepository } from '../../repositories/IMeasureRepository'
-import { MeasureRepositoryPostgresImpl } from '../../repositories/postgres/MeasureRepositoryPostgresImpl'
 import { IListUseCase } from '../IMeasureUseCase'
 import { ListMeasuresDto, MeasureDto } from '../MeasureUseCaseDto'
 
 export class ListMeasuresUseCase implements IListUseCase {
   private constructor(readonly repository: IMeasureRepository) {}
 
-  public static build(repository: MeasureRepositoryPostgresImpl) {
+  public static build(repository: IMeasureRepository): ListMeasuresUseCase {
     return new ListMeasuresUseCase(repository)
   }
 
@@ -26,8 +25,7 @@ export class ListMeasuresUseCase implements IListUseCase {
   }
 
   private validateType(type?: string): void {
-    const validTypes = ['WATER', 'GAS']
-    if (type && !validTypes.includes(type)) {
+    if (type && type !== 'WATER' && type !== 'GAS') {
       throw new ClientError(400, 'INVALID_TYPE', 'Tipo de medição não permitida')
     }
   }
