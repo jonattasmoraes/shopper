@@ -5,8 +5,8 @@ dotenv.config()
 
 const DB_CONNECTION_STRING = process.env.DATABASE_URL
 
-const pool = new Pool({
+const db = new Pool({
   connectionString: DB_CONNECTION_STRING,
 })
 
-export { pool }
+export { db }

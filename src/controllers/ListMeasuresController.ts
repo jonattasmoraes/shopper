@@ -1,7 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
 import { ListMeasuresUseCase } from '../useCases/implementation/ListMeasuresUseCase'
-import { MeasureRepositoryPostgresImpl } from '../repositories/postgres/MeasureRepositoryPostgresImpl'
-import { pool } from '../config/Postgres'
 
 /**
  * @swagger
@@ -60,18 +58,23 @@ import { pool } from '../config/Postgres'
  *             schema:
  *               $ref: '#/components/schemas/ErrorDTO'
  */
-export class ListMeasureController {
-  constructor() {}
+export class ListMeasuresController {
+  private useCase: ListMeasuresUseCase
+
+  constructor(useCase: ListMeasuresUseCase) {
+    this.useCase = useCase
+  }
+
+  public static build(useCase: ListMeasuresUseCase): ListMeasuresController {
+    return new ListMeasuresController(useCase)
+  }
 
   async list(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const customerCode = req.params.customerCode
       const measureType = req.query.measure_type as string
 
-      const repository = MeasureRepositoryPostgresImpl.build(pool)
-      const useCase = ListMeasuresUseCase.build(repository)
-
-      const measures = await useCase.execute(customerCode, measureType)
+      const measures = await this.useCase.execute(customerCode, measureType)
 
       res.status(200).json(measures)
     } catch (error) {

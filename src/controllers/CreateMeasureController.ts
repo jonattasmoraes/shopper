@@ -1,8 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { CreateMeasureUseCase } from '../useCases/implementation/CreateMeasureUseCase'
 import { CreateInputDto } from '../useCases/MeasureUseCaseDto'
-import { MeasureRepositoryPostgresImpl } from '../repositories/postgres/MeasureRepositoryPostgresImpl'
-import { pool } from '../config/Postgres'
 
 /**
  * @swagger
@@ -43,21 +41,28 @@ import { pool } from '../config/Postgres'
  *               $ref: '#/components/schemas/ErrorDTO'
  */
 export class CreateMeasureController {
-  async create(req: Request, res: Response, next: NextFunction): Promise<void> {
+  private useCase: CreateMeasureUseCase
+
+  constructor(useCase: CreateMeasureUseCase) {
+    this.useCase = useCase
+  }
+
+  public static build(useCase: CreateMeasureUseCase): CreateMeasureController {
+    return new CreateMeasureController(useCase)
+  }
+
+  public async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { image, customer_code, measure_type, measure_datetime } = req.body
-
-      const repository = MeasureRepositoryPostgresImpl.build(pool)
-      const useCase = CreateMeasureUseCase.build(repository)
 
       const data: CreateInputDto = {
         image: image,
         code: customer_code,
+        datetime: measure_datetime,
         type: measure_type,
-        datatime: measure_datetime,
       }
 
-      const result = await useCase.execute(data)
+      const result = await this.useCase.execute(data)
       res.status(200).json(result)
     } catch (error) {
       next(error)

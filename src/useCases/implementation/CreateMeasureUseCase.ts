@@ -18,7 +18,7 @@ export class CreateMeasureUseCase implements ICreateUseCase {
     try {
       this.validateImage(data.image)
 
-      const validDate = this.validateAndFormatDate(data.datatime)
+      const validDate = this.validateAndFormatDate(data.datetime)
 
       await this.checkIfMeasureExists(data, validDate)
 

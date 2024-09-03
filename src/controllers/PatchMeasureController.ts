@@ -1,7 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
 import { PatchMeasureUseCase } from '../useCases/implementation/PatchMeasureUseCase'
-import { MeasureRepositoryPostgresImpl } from '../repositories/postgres/MeasureRepositoryPostgresImpl'
-import { pool } from '../config/Postgres'
 
 /**
  * @swagger
@@ -52,14 +50,21 @@ import { pool } from '../config/Postgres'
  *               $ref: '#/components/schemas/ErrorDTO'
  */
 export class ConfirmMeasureController {
+  private useCase: PatchMeasureUseCase
+
+  constructor(useCase: PatchMeasureUseCase) {
+    this.useCase = useCase
+  }
+
+  static build(useCase: PatchMeasureUseCase): ConfirmMeasureController {
+    return new ConfirmMeasureController(useCase)
+  }
+
   async confirm(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { measure_uuid, confirmed_value } = req.body
 
-      const repository = MeasureRepositoryPostgresImpl.build(pool)
-      const useCase = PatchMeasureUseCase.build(repository)
-
-      await useCase.execute(measure_uuid, confirmed_value)
+      await this.useCase.execute(measure_uuid, confirmed_value)
 
       res.status(200).json({ success: true })
     } catch (error) {

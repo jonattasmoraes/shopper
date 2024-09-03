@@ -1,7 +1,7 @@
 export type CreateInputDto = {
   image: string
   code: string
-  datatime: string
+  datetime: string
   type: string
 }
 
