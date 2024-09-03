@@ -1,4 +1,4 @@
-import { ClientError } from '../errors/BaseError'
+import { ApiError } from '../errors/ApiError'
 
 /**
  * Helper function to verify that a promise is rejected with a specific ClientError.
@@ -8,25 +8,25 @@ import { ClientError } from '../errors/BaseError'
  * @param expectedErrorCode - The expected error code of the error.
  * @param expectedErrorDescription - The expected error description of the error.
  */
-export function expectClientError(
+
+export const expectClientError = async (
   promise: Promise<unknown>,
-  expectedStatusCode: number,
+  expectedStatus: number,
   expectedErrorCode: string,
-  expectedErrorDescription: string,
-) {
-  return promise
-    .then(() => {
-      throw new Error('Expected promise to be rejected.')
-    })
-    .catch((error) => {
-      if (error instanceof ClientError) {
-        expect(error.statusCode).toBe(expectedStatusCode)
-        expect(error.errorCode).toBe(expectedErrorCode)
-        expect(error.errorDescription).toBe(expectedErrorDescription)
-      } else {
-        throw error
-      }
-    })
+  expectedMessage: string,
+) => {
+  try {
+    await promise
+    throw new Error('Expected error was not thrown')
+  } catch (error) {
+    if (error instanceof ApiError) {
+      expect(error.statusCode).toBe(expectedStatus)
+      expect(error.errorCode).toBe(expectedErrorCode)
+      expect(error.message).toBe(expectedMessage)
+    } else {
+      throw error
+    }
+  }
 }
 
 /**
@@ -50,11 +50,11 @@ export function expectClientErrorSync(
     throw new Error('Expected function to throw an error.')
   } catch (error) {
     // Check if the caught error is an instance of ClientError
-    if (error instanceof ClientError) {
+    if (error instanceof ApiError) {
       // Verify the error properties
       expect(error.statusCode).toBe(expectedStatusCode)
       expect(error.errorCode).toBe(expectedErrorCode)
-      expect(error.errorDescription).toBe(expectedErrorDescription)
+      expect(error.message).toBe(expectedErrorDescription)
     } else {
       // If the error is not a ClientError, rethrow it
       throw error

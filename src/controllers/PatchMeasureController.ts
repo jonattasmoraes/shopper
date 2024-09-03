@@ -1,8 +1,7 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { PatchMeasureUseCase } from '../useCases/implementation/PatchMeasureUseCase'
 import { MeasureRepositoryPostgresImpl } from '../repositories/postgres/MeasureRepositoryPostgresImpl'
 import { pool } from '../config/Postgres'
-import { BaseError, ErrorHandler } from '../common/errors/BaseError'
 
 /**
  * @swagger
@@ -53,13 +52,7 @@ import { BaseError, ErrorHandler } from '../common/errors/BaseError'
  *               $ref: '#/components/schemas/ErrorDTO'
  */
 export class ConfirmMeasureController {
-  constructor() {}
-
-  public static build() {
-    return new ConfirmMeasureController()
-  }
-
-  async confirm(req: Request, res: Response): Promise<void> {
+  async confirm(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { measure_uuid, confirmed_value } = req.body
 
@@ -69,15 +62,8 @@ export class ConfirmMeasureController {
       await useCase.execute(measure_uuid, confirmed_value)
 
       res.status(200).json({ success: true })
-    } catch (error: unknown) {
-      if (error instanceof BaseError) {
-        ErrorHandler(res, error)
-      } else {
-        res.status(500).json({
-          status: 'error',
-          message: 'Internal server error',
-        })
-      }
+    } catch (error) {
+      next(error)
     }
   }
 }

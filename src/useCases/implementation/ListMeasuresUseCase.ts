@@ -1,4 +1,4 @@
-import { ClientError } from '../../common/errors/BaseError'
+import { InvalidTypeError, MeasuresNotFound } from '../../common/errors/ApiError'
 import { Measure } from '../../entities/Measure'
 import { IMeasureRepository } from '../../repositories/IMeasureRepository'
 import { IListUseCase } from '../IMeasureUseCase'
@@ -26,14 +26,14 @@ export class ListMeasuresUseCase implements IListUseCase {
 
   private validateType(type?: string): void {
     if (type && type !== 'WATER' && type !== 'GAS') {
-      throw new ClientError(400, 'INVALID_TYPE', 'Tipo de medição não permitida')
+      throw new InvalidTypeError()
     }
   }
 
   private async fetchMeasures(customerCode: string, type?: string): Promise<Measure[]> {
     const measures = await this.repository.list(customerCode, type)
     if (!measures || measures.length === 0) {
-      throw new ClientError(404, 'MEASURES_NOT_FOUND', 'Nenhuma leitura encontrada')
+      throw new MeasuresNotFound()
     }
     return measures
   }

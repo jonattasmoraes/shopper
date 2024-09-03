@@ -5,7 +5,7 @@ import { CreateInputDto, CreateOutputDto } from '../MeasureUseCaseDto'
 import { IMeasureRepository } from '../../repositories/IMeasureRepository'
 import { Measure } from '../../entities/Measure'
 import { ICreateUseCase } from '../IMeasureUseCase'
-import { ClientError } from '../../common/errors/BaseError'
+import { DoubleReportError, InvalidDataError } from '../../common/errors/ApiError'
 
 export class CreateMeasureUseCase implements ICreateUseCase {
   private constructor(readonly repository: IMeasureRepository) {}
@@ -38,7 +38,7 @@ export class CreateMeasureUseCase implements ICreateUseCase {
     const measureExists = await this.repository.findByData(data.code, data.type, measureDate)
 
     if (measureExists) {
-      throw new ClientError(409, 'DOUBLE_REPORT', 'Leitura do mês já realizada')
+      throw new DoubleReportError()
     }
   }
 
@@ -66,9 +66,7 @@ export class CreateMeasureUseCase implements ICreateUseCase {
     const parsedDate = moment(date)
 
     if (!parsedDate.isValid()) {
-      throw new ClientError(
-        400,
-        'INVALID_DATA',
+      throw new InvalidDataError(
         'O measure_datetime não foi informado ou é inválido, por favor revise os dados e tente novamente',
       )
     }
@@ -79,9 +77,7 @@ export class CreateMeasureUseCase implements ICreateUseCase {
   private parseAndValidateMeasureValue(text: string): number {
     const measureValue = parseInt(text, 10)
     if (isNaN(measureValue)) {
-      throw new ClientError(
-        400,
-        'INVALID_DATA',
+      throw new InvalidDataError(
         'Não foi possível parsear o valor da medida, por favor revise os dados e tente novamente',
       )
     }
@@ -90,9 +86,7 @@ export class CreateMeasureUseCase implements ICreateUseCase {
 
   private validateImage(image: string): void {
     if (!image || !this.isValidBase64(image)) {
-      throw new ClientError(
-        400,
-        'INVALID_DATA',
+      throw new InvalidDataError(
         'A imagem é obrigatória e deve ser uma imagem base64, por favor revise os dados e tente novamente',
       )
     }

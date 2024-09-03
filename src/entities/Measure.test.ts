@@ -1,17 +1,6 @@
 import { expectClientErrorSync } from '../common/utils/ErrorValidator'
 import { Measure } from './Measure'
 
-const INVALID_CUSTOMER_CODE_DESCRIPTION =
-  'O customer_code nao foi informado ou é invalido, por favor revise os dados e tente novamente'
-const INVALID_DATE_DESCRIPTION =
-  'O measure_datetime não foi informado ou é inválido, por favor revise os dados e tente novamente'
-const SET_VALUE_DESCRIPTION =
-  'O confirmed_value deve ser um número inteiro e maior que 0. Por favor, revise os dados e tente novamente.'
-const INVALID_TYPE_DESCRIPTION =
-  'O measure_type não foi informado ou é diferente de WATE e GAS, por favor revise os dados e tente novamente'
-const INVALID_TYPE = 'INVALID_TYPE'
-const INVALID_DATA = 'INVALID_DATA'
-
 describe('Measure Creation', () => {
   const validDate = new Date()
   const invalidDateString = '2024-083-30 12:00:00'
@@ -34,8 +23,8 @@ describe('Measure Creation', () => {
     expectClientErrorSync(
       () => Measure.create('', 'WATER', new Date()),
       400,
-      INVALID_DATA,
-      INVALID_CUSTOMER_CODE_DESCRIPTION,
+      'INVALID_DATA',
+      'O customer_code nao foi informado ou é invalido, por favor revise os dados e tente novamente',
     )
   })
 
@@ -43,8 +32,8 @@ describe('Measure Creation', () => {
     expectClientErrorSync(
       () => Measure.create('CUSTOMER', 'INVALID_TYPE', new Date()),
       400,
-      INVALID_TYPE,
-      INVALID_TYPE_DESCRIPTION,
+      'INVALID_DATA',
+      'O measure_type não foi informado ou é diferente de WATE e GAS, por favor revise os dados e tente novamente',
     )
   })
 
@@ -52,8 +41,8 @@ describe('Measure Creation', () => {
     expectClientErrorSync(
       () => Measure.create('CUSTOMER', '', new Date()),
       400,
-      INVALID_TYPE,
-      INVALID_TYPE_DESCRIPTION,
+      'INVALID_DATA',
+      'O measure_type não foi informado ou é diferente de WATE e GAS, por favor revise os dados e tente novamente',
     )
   })
 
@@ -61,8 +50,8 @@ describe('Measure Creation', () => {
     expectClientErrorSync(
       () => Measure.create('CUSTOMER', 'water', new Date()),
       400,
-      INVALID_TYPE,
-      INVALID_TYPE_DESCRIPTION,
+      'INVALID_DATA',
+      'O measure_type não foi informado ou é diferente de WATE e GAS, por favor revise os dados e tente novamente',
     )
   })
 
@@ -71,8 +60,8 @@ describe('Measure Creation', () => {
     expectClientErrorSync(
       () => Measure.create('CUSTOMER', 'WATER', invalidDate),
       400,
-      INVALID_DATA,
-      INVALID_DATE_DESCRIPTION,
+      'INVALID_DATA',
+      'O measure_datetime não foi informado ou é inválido, por favor revise os dados e tente novamente',
     )
   })
 
@@ -81,8 +70,8 @@ describe('Measure Creation', () => {
     expectClientErrorSync(
       () => Measure.create('CUSTOMER', 'WATER', invalidDate),
       400,
-      INVALID_DATA,
-      INVALID_DATE_DESCRIPTION,
+      'INVALID_DATA',
+      'O measure_datetime não foi informado ou é inválido, por favor revise os dados e tente novamente',
     )
   })
 
@@ -94,8 +83,8 @@ describe('Measure Creation', () => {
         measure.value = 0
       },
       400,
-      INVALID_DATA,
-      SET_VALUE_DESCRIPTION,
+      'INVALID_DATA',
+      'O confirmed_value deve ser um número inteiro e maior que 0. Por favor, revise os dados e tente novamente.',
     )
 
     expectClientErrorSync(
@@ -103,8 +92,8 @@ describe('Measure Creation', () => {
         measure.value = 0
       },
       400,
-      INVALID_DATA,
-      SET_VALUE_DESCRIPTION,
+      'INVALID_DATA',
+      'O confirmed_value deve ser um número inteiro e maior que 0. Por favor, revise os dados e tente novamente.',
     )
   })
 })

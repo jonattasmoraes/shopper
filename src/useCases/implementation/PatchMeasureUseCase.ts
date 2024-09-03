@@ -1,8 +1,8 @@
 import validator from 'validator'
 import { IMeasureRepository } from '../../repositories/IMeasureRepository'
 import { Measure } from '../../entities/Measure'
-import { ClientError } from '../../common/errors/BaseError'
 import { IConfirmUseCase } from '../IMeasureUseCase'
+import { DuplicationError, InvalidDataError, MeasureNotFound } from '../../common/errors/ApiError'
 
 export class PatchMeasureUseCase implements IConfirmUseCase {
   private constructor(readonly repository: IMeasureRepository) {}
@@ -30,9 +30,7 @@ export class PatchMeasureUseCase implements IConfirmUseCase {
 
   private validateId(id: string): void {
     if (!id || typeof id !== 'string' || !validator.isUUID(id)) {
-      throw new ClientError(
-        400,
-        'INVALID_DATA',
+      throw new InvalidDataError(
         'O measure_uuid informado é inválido. Por favor, revise os dados e tente novamente.',
       )
     }
@@ -42,7 +40,7 @@ export class PatchMeasureUseCase implements IConfirmUseCase {
     const measure = await this.repository.findById(id)
 
     if (!measure) {
-      throw new ClientError(404, 'MEASURE_NOT_FOUND', 'Leitura do mês não encontrada.')
+      throw new MeasureNotFound()
     }
 
     return measure
@@ -55,7 +53,7 @@ export class PatchMeasureUseCase implements IConfirmUseCase {
   private validateValueIsConfirmed(measure: Measure): void {
     console.log(measure.hasConfirmed)
     if (measure.hasConfirmed) {
-      throw new ClientError(409, 'Leitura do mês já confirmada', 'CONFIRMATION_DUPLICATE')
+      throw new DuplicationError()
     }
   }
 }

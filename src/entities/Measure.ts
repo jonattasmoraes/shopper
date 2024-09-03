@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid'
 import moment from 'moment'
-import { ClientError } from '../common/errors/BaseError'
+import { InvalidDataError } from '../common/errors/ApiError'
 
 type MeasureProps = {
   id: string
@@ -53,25 +53,19 @@ export class Measure {
 
   static validator(customerCode: string, type: string, dataTime: Date) {
     if (!customerCode || typeof customerCode !== 'string') {
-      throw new ClientError(
-        400,
-        'INVALID_DATA',
+      throw new InvalidDataError(
         'O customer_code nao foi informado ou é invalido, por favor revise os dados e tente novamente',
       )
     }
 
     if (!type || (type !== 'WATER' && type !== 'GAS')) {
-      throw new ClientError(
-        400,
-        'INVALID_TYPE',
+      throw new InvalidDataError(
         'O measure_type não foi informado ou é diferente de WATE e GAS, por favor revise os dados e tente novamente',
       )
     }
 
     if (!dataTime || !moment(dataTime).isValid()) {
-      throw new ClientError(
-        400,
-        'INVALID_DATA',
+      throw new InvalidDataError(
         'O measure_datetime não foi informado ou é inválido, por favor revise os dados e tente novamente',
       )
     }
@@ -107,9 +101,7 @@ export class Measure {
 
   public set value(value: number) {
     if (!Number.isInteger(value) || value <= 0) {
-      throw new ClientError(
-        400,
-        'INVALID_DATA',
+      throw new InvalidDataError(
         'O confirmed_value deve ser um número inteiro e maior que 0. Por favor, revise os dados e tente novamente.',
       )
     }

@@ -1,9 +1,8 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { CreateMeasureUseCase } from '../useCases/implementation/CreateMeasureUseCase'
 import { CreateInputDto } from '../useCases/MeasureUseCaseDto'
 import { MeasureRepositoryPostgresImpl } from '../repositories/postgres/MeasureRepositoryPostgresImpl'
 import { pool } from '../config/Postgres'
-import { BaseError, ErrorHandler } from '../common/errors/BaseError'
 
 /**
  * @swagger
@@ -44,13 +43,7 @@ import { BaseError, ErrorHandler } from '../common/errors/BaseError'
  *               $ref: '#/components/schemas/ErrorDTO'
  */
 export class CreateMeasureController {
-  constructor() {}
-
-  public static build() {
-    return new CreateMeasureController()
-  }
-
-  async create(req: Request, res: Response): Promise<void> {
+  async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { image, customer_code, measure_type, measure_datetime } = req.body
 
@@ -66,15 +59,8 @@ export class CreateMeasureController {
 
       const result = await useCase.execute(data)
       res.status(200).json(result)
-    } catch (error: unknown) {
-      if (error instanceof BaseError) {
-        ErrorHandler(res, error)
-      } else {
-        res.status(500).json({
-          status: 'error',
-          message: 'Internal server error',
-        })
-      }
+    } catch (error) {
+      next(error)
     }
   }
 }

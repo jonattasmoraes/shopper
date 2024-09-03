@@ -1,8 +1,7 @@
-import { Request, Response } from 'express'
+import { Request, Response, NextFunction } from 'express'
 import { ListMeasuresUseCase } from '../useCases/implementation/ListMeasuresUseCase'
 import { MeasureRepositoryPostgresImpl } from '../repositories/postgres/MeasureRepositoryPostgresImpl'
 import { pool } from '../config/Postgres'
-import { BaseError, ErrorHandler } from '../common/errors/BaseError'
 
 /**
  * @swagger
@@ -64,11 +63,7 @@ import { BaseError, ErrorHandler } from '../common/errors/BaseError'
 export class ListMeasureController {
   constructor() {}
 
-  public static build() {
-    return new ListMeasureController()
-  }
-
-  async list(req: Request, res: Response): Promise<void> {
+  async list(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const customerCode = req.params.customerCode
       const measureType = req.query.measure_type as string
@@ -77,16 +72,10 @@ export class ListMeasureController {
       const useCase = ListMeasuresUseCase.build(repository)
 
       const measures = await useCase.execute(customerCode, measureType)
+
       res.status(200).json(measures)
-    } catch (error: unknown) {
-      if (error instanceof BaseError) {
-        ErrorHandler(res, error)
-      } else {
-        res.status(500).json({
-          status: 'error',
-          message: 'Internal server error',
-        })
-      }
+    } catch (error) {
+      next(error)
     }
   }
 }

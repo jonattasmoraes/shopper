@@ -8,22 +8,7 @@ jest.mock('../../config/GeminiProvider', () => ({
   geminiProvider: jest.fn(),
 }))
 
-const MEASURE_ALREADY_EXISTS = 'Leitura do mês já realizada'
-const ERROR_IMAGE_INVALID =
-  'A imagem é obrigatória e deve ser uma imagem base64, por favor revise os dados e tente novamente'
-const ERROR_DATETIME_INVALID =
-  'O measure_datetime não foi informado ou é inválido, por favor revise os dados e tente novamente'
-const ERROR_MEASURE_TYPE_INVALID =
-  'O measure_type não foi informado ou é diferente de WATE e GAS, por favor revise os dados e tente novamente'
-const ERROR_CUSTOMER_CODE_INVALID =
-  'O customer_code nao foi informado ou é invalido, por favor revise os dados e tente novamente'
-const ERROR_PARSE_MEASURE_VALUE =
-  'Não foi possível parsear o valor da medida, por favor revise os dados e tente novamente'
-const INVALID_DATA = 'INVALID_DATA'
-const INVALID_TYPE = 'INVALID_TYPE'
-const DOUBLE_REPORT = 'DOUBLE_REPORT'
-
-describe('Create Measure Use Case', () => {
+describe('Measure Use Case', () => {
   let repository: InMemoryMeasureRepository
   let createMeasureUseCase: CreateMeasureUseCase
 
@@ -67,8 +52,8 @@ describe('Create Measure Use Case', () => {
     return expectClientError(
       createMeasureUseCase.execute(inputData),
       409,
-      DOUBLE_REPORT,
-      MEASURE_ALREADY_EXISTS,
+      'DOUBLE_REPORT',
+      'Leitura do mês já realizada',
     )
   })
 
@@ -88,8 +73,8 @@ describe('Create Measure Use Case', () => {
     return expectClientError(
       createMeasureUseCase.execute(inputData),
       400,
-      INVALID_DATA,
-      ERROR_PARSE_MEASURE_VALUE,
+      'INVALID_DATA',
+      'Não foi possível parsear o valor da medida, por favor revise os dados e tente novamente',
     )
   })
 
@@ -104,8 +89,8 @@ describe('Create Measure Use Case', () => {
     return expectClientError(
       createMeasureUseCase.execute(inputData),
       400,
-      INVALID_DATA,
-      ERROR_IMAGE_INVALID,
+      'INVALID_DATA',
+      'A imagem é obrigatória e deve ser uma imagem base64, por favor revise os dados e tente novamente',
     )
   })
 
@@ -120,8 +105,8 @@ describe('Create Measure Use Case', () => {
     return expectClientError(
       createMeasureUseCase.execute(inputData),
       400,
-      INVALID_DATA,
-      ERROR_IMAGE_INVALID,
+      'INVALID_DATA',
+      'A imagem é obrigatória e deve ser uma imagem base64, por favor revise os dados e tente novamente',
     )
   })
 
@@ -136,8 +121,8 @@ describe('Create Measure Use Case', () => {
     return expectClientError(
       createMeasureUseCase.execute(inputData),
       400,
-      INVALID_DATA,
-      ERROR_DATETIME_INVALID,
+      'INVALID_DATA',
+      'O measure_datetime não foi informado ou é inválido, por favor revise os dados e tente novamente',
     )
   })
 
@@ -152,8 +137,8 @@ describe('Create Measure Use Case', () => {
     return expectClientError(
       createMeasureUseCase.execute(inputData),
       400,
-      INVALID_DATA,
-      ERROR_DATETIME_INVALID,
+      'INVALID_DATA',
+      'O measure_datetime não foi informado ou é inválido, por favor revise os dados e tente novamente',
     )
   })
 
@@ -168,8 +153,8 @@ describe('Create Measure Use Case', () => {
     return expectClientError(
       createMeasureUseCase.execute(inputData),
       400,
-      INVALID_TYPE,
-      ERROR_MEASURE_TYPE_INVALID,
+      'INVALID_DATA',
+      'O measure_type não foi informado ou é diferente de WATE e GAS, por favor revise os dados e tente novamente',
     )
   })
 
@@ -184,8 +169,8 @@ describe('Create Measure Use Case', () => {
     return expectClientError(
       createMeasureUseCase.execute(inputData),
       400,
-      INVALID_TYPE,
-      ERROR_MEASURE_TYPE_INVALID,
+      'INVALID_DATA',
+      'O measure_type não foi informado ou é diferente de WATE e GAS, por favor revise os dados e tente novamente',
     )
   })
 
@@ -200,8 +185,8 @@ describe('Create Measure Use Case', () => {
     return expectClientError(
       createMeasureUseCase.execute(inputData),
       400,
-      INVALID_TYPE,
-      ERROR_MEASURE_TYPE_INVALID,
+      'INVALID_DATA',
+      'O measure_type não foi informado ou é diferente de WATE e GAS, por favor revise os dados e tente novamente',
     )
   })
 
@@ -216,8 +201,8 @@ describe('Create Measure Use Case', () => {
     return expectClientError(
       createMeasureUseCase.execute(inputData),
       400,
-      INVALID_DATA,
-      ERROR_CUSTOMER_CODE_INVALID,
+      'INVALID_DATA',
+      'O customer_code nao foi informado ou é invalido, por favor revise os dados e tente novamente',
     )
   })
 })
