@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid'
 import moment from 'moment'
-import { InvalidDataError } from '../common/errors/ApiError'
+import { InvalidDataError } from '../common/utils/ApiError'
 
 type MeasureProps = {
   id: string

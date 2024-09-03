@@ -1,4 +1,4 @@
-import { InvalidTypeError, MeasuresNotFound } from '../../common/errors/ApiError'
+import { InvalidTypeError, MeasuresNotFound } from '../../common/utils/ApiError'
 import { Measure } from '../../entities/Measure'
 import { IMeasureRepository } from '../../repositories/IMeasureRepository'
 import { IListUseCase } from '../IMeasureUseCase'

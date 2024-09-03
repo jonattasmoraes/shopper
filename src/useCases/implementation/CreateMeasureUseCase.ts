@@ -5,7 +5,7 @@ import { CreateInputDto, CreateOutputDto } from '../MeasureUseCaseDto'
 import { IMeasureRepository } from '../../repositories/IMeasureRepository'
 import { Measure } from '../../entities/Measure'
 import { ICreateUseCase } from '../IMeasureUseCase'
-import { DoubleReportError, InvalidDataError } from '../../common/errors/ApiError'
+import { DoubleReportError, InvalidDataError } from '../../common/utils/ApiError'
 
 export class CreateMeasureUseCase implements ICreateUseCase {
   private constructor(readonly repository: IMeasureRepository) {}
