@@ -1,5 +1,5 @@
-import Schemas from './schemas'
-import Responses from './responses'
+import Schemas from './Schemas'
+import Responses from './Responses'
 
 const swaggerDefinition = {
   openapi: '3.0.0',
