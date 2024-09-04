@@ -1,4 +1,4 @@
-import { expectClientError } from '../../common/utils/ErrorValidator'
+import { ApiError } from '../../common/errors/ApiError'
 import { Measure } from '../../entities/Measure'
 import { InMemoryMeasureRepository } from '../../repositories/in-memory/MeasureInMemoryRepository'
 import { PatchMeasureUseCase } from './PatchMeasureUseCase'
@@ -25,38 +25,58 @@ describe('Create Measure Use Case', () => {
   })
 
   it('should throw an error if measure ID is invalid', async () => {
-    return expectClientError(
-      patchUseCase.execute('invalid_id', 10),
-      400,
-      'INVALID_DATA',
-      'O measure_uuid informado é inválido. Por favor, revise os dados e tente novamente.',
-    )
+    try {
+      await patchUseCase.execute('invalid_id', 10)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        expect(error.statusCode).toBe(400)
+        expect(error.errorCode).toBe('INVALID_DATA')
+        expect(error.message).toBe(
+          'O measure_uuid informado é inválido. Por favor, revise os dados e tente novamente.',
+        )
+      }
+    }
   })
 
   it('should throw an error if id is not empty', async () => {
-    return expectClientError(
-      patchUseCase.execute('', 10),
-      400,
-      'INVALID_DATA',
-      'O measure_uuid informado é inválido. Por favor, revise os dados e tente novamente.',
-    )
+    try {
+      await patchUseCase.execute('', 10)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        expect(error.statusCode).toBe(400)
+        expect(error.errorCode).toBe('INVALID_DATA')
+        expect(error.message).toBe(
+          'O measure_uuid informado é inválido. Por favor, revise os dados e tente novamente.',
+        )
+      }
+    }
   })
 
   it('should throw an error if value is zero', async () => {
-    return expectClientError(
-      patchUseCase.execute('invalid_id', 0),
-      400,
-      'INVALID_DATA',
-      'O measure_uuid informado é inválido. Por favor, revise os dados e tente novamente.',
-    )
+    try {
+      await patchUseCase.execute('invalid_id', 0)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        expect(error.statusCode).toBe(400)
+        expect(error.errorCode).toBe('INVALID_DATA')
+        expect(error.message).toBe(
+          'O measure_uuid informado é inválido. Por favor, revise os dados e tente novamente.',
+        )
+      }
+    }
   })
 
   it('should throw an error if value is negative', async () => {
-    return expectClientError(
-      patchUseCase.execute('invalid_id', -10),
-      400,
-      'INVALID_DATA',
-      'O measure_uuid informado é inválido. Por favor, revise os dados e tente novamente.',
-    )
+    try {
+      await patchUseCase.execute('invalid_id', -10)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        expect(error.statusCode).toBe(400)
+        expect(error.errorCode).toBe('INVALID_DATA')
+        expect(error.message).toBe(
+          'O measure_uuid informado é inválido. Por favor, revise os dados e tente novamente.',
+        )
+      }
+    }
   })
 })

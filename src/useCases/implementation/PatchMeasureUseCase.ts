@@ -2,7 +2,7 @@ import validator from 'validator'
 import { IMeasureRepository } from '../../repositories/IMeasureRepository'
 import { Measure } from '../../entities/Measure'
 import { IConfirmUseCase } from '../IMeasureUseCase'
-import { DuplicationError, InvalidDataError, MeasureNotFound } from '../../common/utils/ApiError'
+import { DuplicationError, InvalidDataError, MeasureNotFound } from '../../common/errors/ApiError'
 
 export class PatchMeasureUseCase implements IConfirmUseCase {
   private constructor(readonly repository: IMeasureRepository) {}

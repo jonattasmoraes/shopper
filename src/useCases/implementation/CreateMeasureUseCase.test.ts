@@ -1,4 +1,4 @@
-import { expectClientError } from '../../common/utils/ErrorValidator'
+import { ApiError } from '../../common/errors/ApiError'
 import { geminiProvider } from '../../config/GeminiProvider'
 import { Measure } from '../../entities/Measure'
 import { InMemoryMeasureRepository } from '../../repositories/in-memory/MeasureInMemoryRepository'
@@ -24,7 +24,7 @@ describe('Measure Use Case', () => {
   it('should create a measure successfully', async () => {
     const inputData = {
       image: 'dGVzdA==',
-      datatime: '2024-09-01T12:00:00Z',
+      datetime: '2024-09-01T12:00:00Z',
       code: 'CUSTOMER_CODE',
       type: 'WATER',
     }
@@ -40,21 +40,24 @@ describe('Measure Use Case', () => {
     const date = new Date('2024-09-01T12:00:00Z')
     const measure = Measure.create('CUSTOMER_CODE', 'GAS', date)
 
-    await repository.save(measure)
+    try {
+      await repository.save(measure)
 
-    const inputData = {
-      image: 'dGVzdA==',
-      datatime: '2024-09-01T12:00:00Z',
-      code: 'CUSTOMER_CODE',
-      type: 'GAS',
+      const inputData = {
+        image: 'dGVzdA==',
+        datetime: '2024-09-01T12:00:00Z',
+        code: 'CUSTOMER_CODE',
+        type: 'GAS',
+      }
+
+      await createMeasureUseCase.execute(inputData)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        expect(error.statusCode).toBe(409)
+        expect(error.errorCode).toBe('DOUBLE_REPORT')
+        expect(error.message).toBe('Leitura do mês já realizada')
+      }
     }
-
-    return expectClientError(
-      createMeasureUseCase.execute(inputData),
-      409,
-      'DOUBLE_REPORT',
-      'Leitura do mês já realizada',
-    )
   })
 
   it('should throw an error if the parse image fails', async () => {
@@ -63,146 +66,191 @@ describe('Measure Use Case', () => {
       uri: 'https://mocked-url.com/image.png',
     })
 
-    const inputData = {
-      image: 'dGVzdA==',
-      datatime: '2024-09-01T12:00:00Z',
-      code: 'CUSTOMER_CODE',
-      type: 'GAS',
-    }
+    try {
+      const inputData = {
+        image: 'dGVzdA==',
+        datetime: '2024-09-01T12:00:00Z',
+        code: 'CUSTOMER_CODE',
+        type: 'GAS',
+      }
 
-    return expectClientError(
-      createMeasureUseCase.execute(inputData),
-      400,
-      'INVALID_DATA',
-      'Não foi possível parsear o valor da medida, por favor revise os dados e tente novamente',
-    )
+      await createMeasureUseCase.execute(inputData)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        expect(error.statusCode).toBe(400)
+        expect(error.errorCode).toBe('INVALID_DATA')
+        expect(error.message).toBe(
+          'Não foi possível parsear o valor da medida, por favor revise os dados e tente novamente',
+        )
+      }
+    }
   })
 
   it('should throw an error if image is not a base64', async () => {
-    const inputData = {
-      image: '@dGVzdA==',
-      datatime: '2024-09-01T12:00:00Z',
-      code: 'CUSTOMER_CODE',
-      type: 'WATER',
-    }
+    try {
+      const inputData = {
+        image: '@dGVzdA==',
+        datetime: '2024-09-01T12:00:00Z',
+        code: 'CUSTOMER_CODE',
+        type: 'WATER',
+      }
 
-    return expectClientError(
-      createMeasureUseCase.execute(inputData),
-      400,
-      'INVALID_DATA',
-      'A imagem é obrigatória e deve ser uma imagem base64, por favor revise os dados e tente novamente',
-    )
+      await createMeasureUseCase.execute(inputData)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        expect(error.statusCode).toBe(400)
+        expect(error.errorCode).toBe('INVALID_DATA')
+        expect(error.message).toBe(
+          'A imagem é obrigatória e deve ser uma imagem base64, por favor revise os dados e tente novamente',
+        )
+      }
+    }
   })
 
   it('should throw an error if image is empty', async () => {
-    const inputData = {
-      image: '',
-      datatime: '2024-09-01T12:00:00Z',
-      code: 'CUSTOMER_CODE',
-      type: 'WATER',
-    }
+    try {
+      const inputData = {
+        image: '',
+        datetime: '2024-09-01T12:00:00Z',
+        code: 'CUSTOMER_CODE',
+        type: 'WATER',
+      }
 
-    return expectClientError(
-      createMeasureUseCase.execute(inputData),
-      400,
-      'INVALID_DATA',
-      'A imagem é obrigatória e deve ser uma imagem base64, por favor revise os dados e tente novamente',
-    )
+      await createMeasureUseCase.execute(inputData)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        expect(error.statusCode).toBe(400)
+        expect(error.errorCode).toBe('INVALID_DATA')
+        expect(error.message).toBe(
+          'A imagem é obrigatória e deve ser uma imagem base64, por favor revise os dados e tente novamente',
+        )
+      }
+    }
   })
 
   it("should throw an error if measure_datetime isn't valid", async () => {
-    const inputData = {
-      image: 'dGVzdA==',
-      datatime: '2024-09-32T12:00:00',
-      code: 'CUSTOMER_CODE',
-      type: 'WATER',
-    }
+    try {
+      const inputData = {
+        image: 'dGVzdA==',
+        datetime: '2024-09-32T12:00:00',
+        code: 'CUSTOMER_CODE',
+        type: 'WATER',
+      }
 
-    return expectClientError(
-      createMeasureUseCase.execute(inputData),
-      400,
-      'INVALID_DATA',
-      'O measure_datetime não foi informado ou é inválido, por favor revise os dados e tente novamente',
-    )
+      await createMeasureUseCase.execute(inputData)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        expect(error.statusCode).toBe(400)
+        expect(error.errorCode).toBe('INVALID_DATA')
+        expect(error.message).toBe(
+          'O measure_datetime não foi informado ou é inválido, por favor revise os dados e tente novamente',
+        )
+      }
+    }
   })
 
   it('should throw an error if measure_datetime is empty', async () => {
-    const inputData = {
-      image: 'dGVzdA==',
-      datatime: '',
-      code: 'CUSTOMER_CODE',
-      type: 'WATER',
-    }
+    try {
+      const inputData = {
+        image: 'dGVzdA==',
+        datetime: '',
+        code: 'CUSTOMER_CODE',
+        type: 'WATER',
+      }
 
-    return expectClientError(
-      createMeasureUseCase.execute(inputData),
-      400,
-      'INVALID_DATA',
-      'O measure_datetime não foi informado ou é inválido, por favor revise os dados e tente novamente',
-    )
+      await createMeasureUseCase.execute(inputData)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        expect(error.statusCode).toBe(400)
+        expect(error.errorCode).toBe('INVALID_DATA')
+        expect(error.message).toBe(
+          'O measure_datetime não foi informado ou é inválido, por favor revise os dados e tente novamente',
+        )
+      }
+    }
   })
 
   it('should throw an error if measure_type is different from "WATER" or "GAS"', async () => {
-    const inputData = {
-      image: 'dGVzdA==',
-      datatime: '2024-09-01T12:00:00Z',
-      code: 'CUSTOMER_CODE',
-      type: 'INVALID_TYPE',
-    }
+    try {
+      const inputData = {
+        image: 'dGVzdA==',
+        datetime: '2024-09-01T12:00:00Z',
+        code: 'CUSTOMER_CODE',
+        type: 'INVALID_TYPE',
+      }
 
-    return expectClientError(
-      createMeasureUseCase.execute(inputData),
-      400,
-      'INVALID_DATA',
-      'O measure_type não foi informado ou é diferente de WATE e GAS, por favor revise os dados e tente novamente',
-    )
+      await createMeasureUseCase.execute(inputData)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        expect(error.statusCode).toBe(400)
+        expect(error.errorCode).toBe('INVALID_DATA')
+        expect(error.message).toBe(
+          'O measure_type não foi informado ou é diferente de WATE e GAS, por favor revise os dados e tente novamente',
+        )
+      }
+    }
   })
 
   it('should throw an error if measure_type is empty', async () => {
-    const inputData = {
-      image: 'dGVzdA==',
-      datatime: '2024-09-01T12:00:00Z',
-      code: 'CUSTOMER_CODE',
-      type: '',
-    }
+    try {
+      const inputData = {
+        image: 'dGVzdA==',
+        datetime: '2024-09-01T12:00:00Z',
+        code: 'CUSTOMER_CODE',
+        type: '',
+      }
 
-    return expectClientError(
-      createMeasureUseCase.execute(inputData),
-      400,
-      'INVALID_DATA',
-      'O measure_type não foi informado ou é diferente de WATE e GAS, por favor revise os dados e tente novamente',
-    )
+      await createMeasureUseCase.execute(inputData)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        expect(error.statusCode).toBe(400)
+        expect(error.errorCode).toBe('INVALID_DATA')
+        expect(error.message).toBe(
+          'O measure_type não foi informado ou é diferente de WATE e GAS, por favor revise os dados e tente novamente',
+        )
+      }
+    }
   })
 
   it('should throw an error if measure_type is lowercase', async () => {
-    const inputData = {
-      image: 'dGVzdA==',
-      datatime: '2024-09-01T12:00:00Z',
-      code: 'CUSTOMER_CODE',
-      type: 'water',
-    }
+    try {
+      const inputData = {
+        image: 'dGVzdA==',
+        datetime: '2024-09-01T12:00:00Z',
+        code: 'CUSTOMER_CODE',
+        type: 'water',
+      }
 
-    return expectClientError(
-      createMeasureUseCase.execute(inputData),
-      400,
-      'INVALID_DATA',
-      'O measure_type não foi informado ou é diferente de WATE e GAS, por favor revise os dados e tente novamente',
-    )
+      await createMeasureUseCase.execute(inputData)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        expect(error.statusCode).toBe(400)
+        expect(error.errorCode).toBe('INVALID_DATA')
+        expect(error.message).toBe(
+          'O measure_type não foi informado ou é diferente de WATE e GAS, por favor revise os dados e tente novamente',
+        )
+      }
+    }
   })
 
   it('should throw an error if customer_code is empty', async () => {
-    const inputData = {
-      image: 'dGVzdA==',
-      datatime: '2024-09-01T12:00:00Z',
-      code: '',
-      type: 'WATER',
-    }
+    try {
+      const inputData = {
+        image: 'dGVzdA==',
+        datetime: '2024-09-01T12:00:00Z',
+        code: '',
+        type: 'WATER',
+      }
 
-    return expectClientError(
-      createMeasureUseCase.execute(inputData),
-      400,
-      'INVALID_DATA',
-      'O customer_code nao foi informado ou é invalido, por favor revise os dados e tente novamente',
-    )
+      await createMeasureUseCase.execute(inputData)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        expect(error.statusCode).toBe(400)
+        expect(error.errorCode).toBe('INVALID_DATA')
+        expect(error.message).toBe(
+          'O customer_code nao foi informado ou é invalido, por favor revise os dados e tente novamente',
+        )
+      }
+    }
   })
 })

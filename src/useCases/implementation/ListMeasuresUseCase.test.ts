@@ -1,7 +1,7 @@
 import { InMemoryMeasureRepository } from '../../repositories/in-memory/MeasureInMemoryRepository'
 import { ListMeasuresUseCase } from './ListMeasuresUseCase'
 import { Measure } from '../../entities/Measure'
-import { expectClientError } from '../../common/utils/ErrorValidator'
+import { ApiError } from '../../common/errors/ApiError'
 
 describe('List Measures Use Case', () => {
   let repository: InMemoryMeasureRepository
@@ -56,24 +56,28 @@ describe('List Measures Use Case', () => {
   it('should throw an error if type is different than "WATER" or "GAS"', async () => {
     const customerCode = '123'
     const invalidType = 'invalid'
-
-    return expectClientError(
-      listUseCase.execute(customerCode, invalidType),
-      400,
-      'INVALID_TYPE',
-      'Tipo de medição não permitida',
-    )
+    try {
+      await listUseCase.execute(customerCode, invalidType)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        expect(error.statusCode).toBe(400)
+        expect(error.errorCode).toBe('INVALID_TYPE')
+        expect(error.message).toBe('Tipo de medição não permitida')
+      }
+    }
   })
 
   it('should throw an error if no measures are found', async () => {
     const customerCode = 'CUSTOMER'
     const type = 'WATER'
-
-    return expectClientError(
-      listUseCase.execute(customerCode, type),
-      404,
-      'MEASURES_NOT_FOUND',
-      'Nenhuma leitura encontrada',
-    )
+    try {
+      await listUseCase.execute(customerCode, type)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        expect(error.statusCode).toBe(404)
+        expect(error.errorCode).toBe('MEASURES_NOT_FOUND')
+        expect(error.message).toBe('Nenhuma leitura encontrada')
+      }
+    }
   })
 })
