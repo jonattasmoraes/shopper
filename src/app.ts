@@ -1,7 +1,7 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import router from './routes'
-import { errorMiddleware } from './middlewares/error'
+import { errorMiddleware } from './middlewares/Error'
 
 const app = express()
 

@@ -3,7 +3,9 @@ export class ApiError extends Error {
   public readonly errorCode: string
 
   constructor(statusCode: number, errorCode: string, message: string) {
-    console.log(statusCode, errorCode, message)
+    console.log(statusCode)
+    console.log(errorCode)
+    console.log(message)
     super(message)
     this.statusCode = statusCode
     this.errorCode = errorCode
