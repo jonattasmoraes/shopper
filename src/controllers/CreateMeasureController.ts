@@ -1,12 +1,6 @@
-import { Request, Response } from 'express'
-import { AppError } from '../common/errors/AppError'
-import { ErrorHandler } from '../common/errors/ErrorHandler'
-import { InternalServerError } from '../common/errors/InternalServerError'
-import {
-  CreateInputDTO,
-  CreateOutputDTO,
-} from '../useCases/createMeasureUseCase/CreateMeasureDTO'
-import { CreateMeasureUseCase } from '../useCases/createMeasureUseCase/CreateMeasureUseCase'
+import { NextFunction, Request, Response } from 'express'
+import { CreateMeasureUseCase } from '../useCases/implementation/CreateMeasureUseCase'
+import { CreateInputDto } from '../useCases/MeasureUseCaseDto'
 
 /**
  * @swagger
@@ -47,19 +41,31 @@ import { CreateMeasureUseCase } from '../useCases/createMeasureUseCase/CreateMea
  *               $ref: '#/components/schemas/ErrorDTO'
  */
 export class CreateMeasureController {
-  constructor(private readonly measureUseCase: CreateMeasureUseCase) {}
+  private useCase: CreateMeasureUseCase
 
-  async createMeasure(req: Request, res: Response): Promise<void> {
+  constructor(useCase: CreateMeasureUseCase) {
+    this.useCase = useCase
+  }
+
+  public static build(useCase: CreateMeasureUseCase): CreateMeasureController {
+    return new CreateMeasureController(useCase)
+  }
+
+  public async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const data: CreateInputDTO = req.body
-      const result: CreateOutputDTO = await this.measureUseCase.execute(data)
-      res.status(200).json(result)
-    } catch (error: unknown) {
-      if (error instanceof AppError) {
-        ErrorHandler(res, error)
-      } else {
-        ErrorHandler(res, new InternalServerError())
+      const { image, customer_code, measure_type, measure_datetime } = req.body
+
+      const data: CreateInputDto = {
+        image: image,
+        code: customer_code,
+        datetime: measure_datetime,
+        type: measure_type,
       }
+
+      const result = await this.useCase.execute(data)
+      res.status(200).json(result)
+    } catch (error) {
+      next(error)
     }
   }
 }

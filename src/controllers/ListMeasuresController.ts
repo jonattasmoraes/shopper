@@ -1,8 +1,5 @@
-import { Request, Response } from 'express'
-import { ListMeasuresUseCase } from '../useCases/listMeasuresUseCase/ListMeasuresUseCase'
-import { ErrorHandler } from '../common/errors/ErrorHandler'
-import { InternalServerError } from '../common/errors/InternalServerError'
-import { AppError } from '../common/errors/AppError'
+import { Request, Response, NextFunction } from 'express'
+import { ListMeasuresUseCase } from '../useCases/implementation/ListMeasuresUseCase'
 
 /**
  * @swagger
@@ -61,25 +58,27 @@ import { AppError } from '../common/errors/AppError'
  *             schema:
  *               $ref: '#/components/schemas/ErrorDTO'
  */
-export class ListMeasureController {
-  constructor(private readonly listMeasuresUseCase: ListMeasuresUseCase) {}
+export class ListMeasuresController {
+  private useCase: ListMeasuresUseCase
 
-  async listMeasures(req: Request, res: Response): Promise<void> {
+  constructor(useCase: ListMeasuresUseCase) {
+    this.useCase = useCase
+  }
+
+  public static build(useCase: ListMeasuresUseCase): ListMeasuresController {
+    return new ListMeasuresController(useCase)
+  }
+
+  async list(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const customerCode = req.params.customerCode
       const measureType = req.query.measure_type as string
 
-      const measures = await this.listMeasuresUseCase.execute(
-        customerCode,
-        measureType,
-      )
+      const measures = await this.useCase.execute(customerCode, measureType)
+
       res.status(200).json(measures)
-    } catch (error: unknown) {
-      if (error instanceof AppError) {
-        ErrorHandler(res, error)
-      } else {
-        ErrorHandler(res, new InternalServerError())
-      }
+    } catch (error) {
+      next(error)
     }
   }
 }

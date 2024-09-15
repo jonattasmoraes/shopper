@@ -1,9 +1,5 @@
-import { Request, Response } from 'express'
-import { PatchInputDTO } from '../useCases/patchMeasureUseCase/PatchMeasureDTO'
-import { PatchMeasureUseCase } from '../useCases/patchMeasureUseCase/PatchMeasureUseCase'
-import { AppError } from '../common/errors/AppError'
-import { InternalServerError } from '../common/errors/InternalServerError'
-import { ErrorHandler } from '../common/errors/ErrorHandler'
+import { NextFunction, Request, Response } from 'express'
+import { PatchMeasureUseCase } from '../useCases/implementation/PatchMeasureUseCase'
 
 /**
  * @swagger
@@ -53,22 +49,26 @@ import { ErrorHandler } from '../common/errors/ErrorHandler'
  *             schema:
  *               $ref: '#/components/schemas/ErrorDTO'
  */
-export class PatchMeasureController {
-  constructor(private readonly patchMeasureUseCase: PatchMeasureUseCase) {}
+export class ConfirmMeasureController {
+  private useCase: PatchMeasureUseCase
 
-  async updateMeasure(req: Request, res: Response): Promise<void> {
+  constructor(useCase: PatchMeasureUseCase) {
+    this.useCase = useCase
+  }
+
+  static build(useCase: PatchMeasureUseCase): ConfirmMeasureController {
+    return new ConfirmMeasureController(useCase)
+  }
+
+  async confirm(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const data: PatchInputDTO = req.body
+      const { measure_uuid, confirmed_value } = req.body
 
-      await this.patchMeasureUseCase.execute(data)
+      await this.useCase.execute(measure_uuid, confirmed_value)
 
       res.status(200).json({ success: true })
-    } catch (error: unknown) {
-      if (error instanceof AppError) {
-        ErrorHandler(res, error)
-      } else {
-        ErrorHandler(res, new InternalServerError())
-      }
+    } catch (error) {
+      next(error)
     }
   }
 }
